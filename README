@@ -1,0 +1,25 @@
+Compilation: make
+
+Utilisation: LD_PRELOAD=./glQuadBufferEmu.so bin
+
+Exemple: LD_PRELOAD=./glQuadBufferEmu.so glxgears -stereo
+
+
+A faire:
+- Fichier de configuration pour les options
+- Amélioration du mode anaglyphe
+- Trouver le moyen de passer d'un mode à un autre sans relancer (surtout pour passer de 3D à 2D ou l'inverse)
+
+
+Mode de rendu disponibles:
+- 2D
+- Anaglyphe
+
+
+Mode de rendu à venir:
+- Entrelacé
+- Côte-à-côte (Left/Right; Top/bottom; Frame-packing)
+
+
+Plus tard :
+- Nvidia 3D Vision (USB & DVI-3D)

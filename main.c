@@ -3,23 +3,19 @@
 #include <stdlib.h>
 
 #include "glQuadBufferEmu.h"
-#include "wrappers.h"
+#include "main.h"
 
-/* link to real functions */
-void (*real_glDrawBuffer) (GLenum mode);
-
-XVisualInfo *(*real_glXChooseVisual) (Display *, int, int *);
-void (*real_glXSwapBuffers) (Display * dpy, GLXDrawable drawable);
-
-void (*real_glutInitDisplayMode) (unsigned int displayMode);
-
+#include "./modes/monoscopic.h"
+#include "./modes/anaglyph.h"
 
 /* globals */
 void *libGL_handle, *libGLUT_handle;
 
-GLenum current_buffer;
+int QuadBufferMode;
+GLenum QuadBufferCurrent;
+GLboolean DEBUG;
 
-/* dsym with check */
+/* dsym with error checking */
 void *dlsym_test(void *lib, char *name)
 {
     char *error;
@@ -55,16 +51,34 @@ void QuadBufferEmuLoadLibs(void){
 	real_glXSwapBuffers = dlsym_test(libGL_handle, "glXSwapBuffers");
 	
 	real_glutInitDisplayMode = dlsym_test(libGLUT_handle, "glutInitDisplayMode");
-	real_glutKeyboardFunc = dlsym_test(libGLUT_handle, "glutKeyboardFunc"); 
 }
 
 void QuadBufferEmuLoadConf(void){
+	QuadBufferCurrent = GL_FRONT; // The initial value is GL_FRONT for single-buffered contexts, and GL_BACK for double-buffered contexts.
+	
 	// FIXME : parse ~/.stereoscopic.conf
-	current_buffer = GL_FRONT; // The initial value is GL_FRONT for single-buffered contexts, and GL_BACK for double-buffered contexts.
+	QuadBufferMode = 0;
+	DEBUG = GL_FALSE;
+}
+
+void QuadBufferEmuLoadMode(void)
+{
+	wrap_glDrawBuffer = NULL;
+	wrap_glXChooseVisual = NULL;
+	wrap_glXSwapBuffers = NULL;
+	wrap_glutInitDisplayMode = NULL;
+	
+	switch(QuadBufferMode){
+		default:
+			initAnaglyphMode();
+	}
 }
 
 void QuadBufferEmuInit(void)
 {
 	QuadBufferEmuLoadLibs();
 	QuadBufferEmuLoadConf();
+	QuadBufferEmuLoadMode();
 }
+
+

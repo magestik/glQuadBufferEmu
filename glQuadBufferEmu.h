@@ -3,10 +3,12 @@
 #include <GL/glu.h>
 #include <GL/glut.h>
 
+// Debug
+extern GLboolean DEBUG;
+
 // Config
-extern int MODE;
-extern int DEBUG;
+extern int QuadBufferMode;
 
 // Fonctionnement
-extern GLenum current_buffer;
+extern GLenum QuadBufferCurrent;
 

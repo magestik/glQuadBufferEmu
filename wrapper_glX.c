@@ -6,9 +6,7 @@
 
 // Wrapper for glX - /usr/include/GL/glx.h
 
-XVisualInfo *glXChooseVisual(Display *dpy, int screen, int *attribList){
-	XVisualInfo *result;
-	
+XVisualInfo *glXChooseVisual(Display *dpy, int screen, int *attribList){	
 	int wrapped_attribList[60]; // 60 is enough ?
 	int requested = 0;
 	
@@ -33,11 +31,20 @@ XVisualInfo *glXChooseVisual(Display *dpy, int screen, int *attribList){
 		fprintf(stderr, "glXChooseVisual(.)\n");
 	}
 
-    result = real_glXChooseVisual(dpy, screen, wrapped_attribList);
-    return (result);	
+    
+	if(wrap_glXChooseVisual == NULL) {
+		return real_glXChooseVisual(dpy, screen, wrapped_attribList);
+	} else {
+		return wrap_glXChooseVisual(dpy, screen, wrapped_attribList);
+	}
 }
 
 void glXSwapBuffers(Display * dpy, GLXDrawable drawable){
-	//fprintf(stderr, "glXSwapBuffers(.)\n");
-	real_glXSwapBuffers(dpy, drawable);
+	if(DEBUG) fprintf(stderr, "glXSwapBuffers(.)\n");
+	
+	if(wrap_glXSwapBuffers == NULL) {
+		real_glXSwapBuffers(dpy, drawable);
+	} else {
+		wrap_glXSwapBuffers(dpy, drawable);
+	}
 }
