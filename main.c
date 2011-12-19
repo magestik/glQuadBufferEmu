@@ -3,7 +3,6 @@
 #include <stdlib.h>
 
 #include "glQuadBufferEmu.h"
-#include "main.h"
 
 #include "./modes/monoscopic.h"
 #include "./modes/anaglyph.h"
