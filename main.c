@@ -6,6 +6,8 @@
 
 #include "./modes/monoscopic.h"
 #include "./modes/anaglyph.h"
+#include "./modes/interlaced.h"
+#include "./modes/side-by-side.h"
 
 /* globals */
 void *libGL_handle, *libGLUT_handle;
