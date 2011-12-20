@@ -5,3 +5,6 @@
 
 
 void initInterlacedMode(void);
+
+
+void interlaced_glDrawBuffer(GLenum mode);

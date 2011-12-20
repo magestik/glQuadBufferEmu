@@ -26,6 +26,7 @@ XVisualInfo *glXChooseVisual(Display *dpy, int screen, int *attribList){
 	wrapped_attribList[i-requested] = None;
 	
 	if(requested > 0) {
+		QuadBufferEnabled = GL_TRUE;
 		fprintf(stderr, "glXChooseVisual(GLX_STEREO)\n");
 	} else {
 		fprintf(stderr, "glXChooseVisual(.)\n");

@@ -1,0 +1,4 @@
+LD_PREDLOAD=<...> ./test
+
+Source code available here : http://www.gali-3d.com/archive/articles/StereoOpenGL/StereoscopicOpenGLTutorial.php
+

@@ -15,9 +15,8 @@ void anaglyph_glDrawBuffer(GLenum mode) {
 	real_glDrawBuffer(mode);
 	
 	if(QuadBufferCurrent == GL_BACK_LEFT || QuadBufferCurrent == GL_FRONT_LEFT){
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glColorMask(GL_FALSE, GL_TRUE, GL_TRUE, GL_TRUE); // on laisse passer que le rouge
-		
 	} else {
 		glClear(GL_DEPTH_BUFFER_BIT);
 		//glEnable(GL_BLEND);

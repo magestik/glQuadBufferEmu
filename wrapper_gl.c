@@ -6,10 +6,7 @@
 
 // Wrapper for GL - /usr/include/GL/gl.h
 
-void glDrawBuffer(GLenum mode)
-{ 
-	
-	// http://www.opengl.org/sdk/docs/man/xhtml/glDrawBuffer.xml
+void glDrawBuffer(GLenum mode) { // http://www.opengl.org/sdk/docs/man/xhtml/glDrawBuffer.xml
 	
 	QuadBufferCurrent = mode;
 	
@@ -52,5 +49,13 @@ void glDrawBuffer(GLenum mode)
 		real_glDrawBuffer(mode);
 	} else {
 		wrap_glDrawBuffer(mode);
+	}
+}
+
+void glGetBooleanv(GLenum pname, GLboolean * params) {	// http://www.opengl.org/sdk/docs/man/xhtml/glGetBooleanv.xml
+	if (pname == GL_STEREO) {
+		*params = GL_TRUE;
+	} else {
+		real_glGetBooleanv(pname, params);
 	}
 }

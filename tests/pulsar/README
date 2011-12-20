@@ -1,0 +1,3 @@
+LD_PREDLOAD=<...> ./test -s
+
+Source code available here : ftp://ftp.sgi.com/opengl/contrib/kschwarz/GLUT_INTRO/SOURCE/PBOURKE/index.html

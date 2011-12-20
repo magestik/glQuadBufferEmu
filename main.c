@@ -13,7 +13,12 @@
 void *libGL_handle, *libGLUT_handle;
 
 int QuadBufferMode;
+
+int QuadBufferHeight;
+int QuadBufferWidth;
+
 GLenum QuadBufferCurrent;
+GLboolean QuadBufferEnabled;
 GLboolean DEBUG;
 
 /* dsym with error checking */
@@ -47,18 +52,24 @@ void QuadBufferEmuLoadLibs(void){
     }
     
 	real_glDrawBuffer = dlsym_test(libGL_handle, "glDrawBuffer");
+	real_glGetBooleanv = dlsym_test(libGL_handle, "glGetBooleanv");
 	
     real_glXChooseVisual = dlsym_test(libGL_handle, "glXChooseVisual");
 	real_glXSwapBuffers = dlsym_test(libGL_handle, "glXSwapBuffers");
 	
 	real_glutInitDisplayMode = dlsym_test(libGLUT_handle, "glutInitDisplayMode");
+	real_glutReshapeWindow = dlsym_test(libGLUT_handle, "glutReshapeWindow");
 }
 
 void QuadBufferEmuLoadConf(void){
+	QuadBufferHeight = 0;
+	QuadBufferWidth = 0;
+	
 	QuadBufferCurrent = GL_FRONT; // The initial value is GL_FRONT for single-buffered contexts, and GL_BACK for double-buffered contexts.
+	QuadBufferEnabled = GL_FALSE;
 	
 	// FIXME : parse ~/.stereoscopic.conf
-	QuadBufferMode = 0;
+	QuadBufferMode = SIDEBYSIDE;
 	DEBUG = GL_FALSE;
 }
 
@@ -70,8 +81,26 @@ void QuadBufferEmuLoadMode(void)
 	wrap_glutInitDisplayMode = NULL;
 	
 	switch(QuadBufferMode){
-		default:
+		case INTERLACED:
+			initInterlacedMode();
+		break;
+		
+		case SIDEBYSIDE:
+			initSideBySideMode();
+		break;
+			
+		case ANAGLYPH:
 			initAnaglyphMode();
+		break;
+				
+		case MONOSCOPIC:
+			initMonoscopicMode();
+		break;
+		
+		case NONE:
+		default:
+			fprintf(stderr, "Mode not supported !\n");
+			exit(1);
 	}
 }
 
@@ -81,5 +110,3 @@ void QuadBufferEmuInit(void)
 	QuadBufferEmuLoadConf();
 	QuadBufferEmuLoadMode();
 }
-
-
