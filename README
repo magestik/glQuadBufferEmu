@@ -1,25 +1,26 @@
-Compilation: make
+Compile the wrapper and the demos:
+make all
 
-Utilisation: LD_PRELOAD=./glQuadBufferEmu.so bin
+Just compile the wrapper:
+make lib
 
-Exemple: LD_PRELOAD=./glQuadBufferEmu.so glxgears -stereo
+Use it:
+LD_PRELOAD=./glQuadBufferEmu.so YourQuadBufferedApplication
 
+Example of use: 
+LD_PRELOAD=./glQuadBufferEmu.so glxgears -stereo
 
-A faire:
-- Fichier de configuration pour les options
-- Amélioration du mode anaglyphe
-- Trouver le moyen de passer d'un mode à un autre sans relancer (surtout pour passer de 3D à 2D ou l'inverse)
+TODO:
+- parse config file
+- switch from one mode to another
 
+Mode available:
+- Monoscopic (Left or Right),
+- Anaglyph (any color),
+- Side-by-side (Left/Right; Top/bottom; Frame-packing).
 
-Mode de rendu disponibles:
-- 2D
-- Anaglyphe
+Mode to come:
+- Interlaced
 
-
-Mode de rendu à venir:
-- Entrelacé
-- Côte-à-côte (Left/Right; Top/bottom; Frame-packing)
-
-
-Plus tard :
+Maybe later:
 - Nvidia 3D Vision (USB & DVI-3D)
