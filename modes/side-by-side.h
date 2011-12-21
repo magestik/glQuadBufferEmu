@@ -16,4 +16,5 @@ int rightViewport[4];
 
 /* Transformation functions */
 void sideBySide_glDrawBuffer(GLenum mode);
+void sideBySide_glViewport(GLint x, GLint y, GLsizei width, GLsizei height);
 void sideBySide_glutReshapeWindow(int width, int height);

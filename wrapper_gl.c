@@ -6,6 +6,14 @@
 
 // Wrapper for GL - /usr/include/GL/gl.h
 
+void glClear(GLbitfield mask) {
+	if(wrap_glClear == NULL || QuadBufferEnabled == GL_FALSE) {
+		real_glClear(mask);
+	} else {
+		wrap_glClear(mask);
+	}
+}
+
 void glDrawBuffer(GLenum mode) { // http://www.opengl.org/sdk/docs/man/xhtml/glDrawBuffer.xml
 	
 	QuadBufferCurrent = mode;
@@ -45,7 +53,7 @@ void glDrawBuffer(GLenum mode) { // http://www.opengl.org/sdk/docs/man/xhtml/glD
 	
 	if(DEBUG) fprintf(stderr, "glDrawBuffer(.)\n");
 	
-	if(wrap_glDrawBuffer == NULL) {
+	if(wrap_glDrawBuffer == NULL || QuadBufferEnabled == GL_FALSE) {
 		real_glDrawBuffer(mode);
 	} else {
 		wrap_glDrawBuffer(mode);
@@ -57,5 +65,13 @@ void glGetBooleanv(GLenum pname, GLboolean * params) {	// http://www.opengl.org/
 		*params = GL_TRUE;
 	} else {
 		real_glGetBooleanv(pname, params);
+	}
+}
+
+void glViewport(GLint x, GLint y, GLsizei width, GLsizei height){
+	if(wrap_glDrawBuffer == NULL || QuadBufferEnabled == GL_FALSE) {
+		real_glViewport(x, y, width, height);
+	} else {
+		wrap_glViewport(x, y, width, height); // Side-By-Side
 	}
 }

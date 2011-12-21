@@ -21,7 +21,7 @@ void glutInitDisplayMode (unsigned int displayMode){
 	
 	displayMode = displayMode & ~GLUT_STEREO;
 	
-	if(wrap_glutInitDisplayMode == NULL) {
+	if(wrap_glutInitDisplayMode == NULL || QuadBufferEnabled == GL_FALSE) {
 		return real_glutInitDisplayMode(displayMode);
 	} else {
 		return wrap_glutInitDisplayMode(displayMode);
@@ -35,7 +35,7 @@ void glutReshapeWindow( int width, int height ){
 	fprintf(stderr, "glutReshapeWindow(%d, %d)\n", width, height);
 	
 	
-	if(wrap_glutReshapeWindow == NULL) {
+	if(wrap_glutReshapeWindow == NULL || QuadBufferEnabled == GL_FALSE) {
 		real_glutReshapeWindow(width, height);
 	} else {
 		wrap_glutReshapeWindow(width, height);

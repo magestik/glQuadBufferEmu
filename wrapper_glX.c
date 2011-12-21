@@ -33,17 +33,33 @@ XVisualInfo *glXChooseVisual(Display *dpy, int screen, int *attribList){
 	}
 
     
-	if(wrap_glXChooseVisual == NULL) {
+	if(wrap_glXChooseVisual == NULL || QuadBufferEnabled == GL_FALSE) {
 		return real_glXChooseVisual(dpy, screen, wrapped_attribList);
 	} else {
 		return wrap_glXChooseVisual(dpy, screen, wrapped_attribList);
 	}
 }
 
+Bool glXMakeCurrent( Display *dpy, GLXDrawable drawable, GLXContext ctx) {
+	Bool b;
+	//unsigned int v;
+	
+	fprintf(stderr, "glXMakeCurrent(.)\n");
+
+	b = real_glXMakeCurrent(dpy, drawable, ctx);
+	
+	if(ctx != NULL){
+		//glXQueryDrawable(dpy, drawable, GLX_WIDTH, &v);
+		//glXQueryDrawable(dpy, drawable, GLX_HEIGHT, &v);
+	}
+	
+	return b;
+}
+			    
 void glXSwapBuffers(Display * dpy, GLXDrawable drawable){
 	if(DEBUG) fprintf(stderr, "glXSwapBuffers(.)\n");
 	
-	if(wrap_glXSwapBuffers == NULL) {
+	if(wrap_glXSwapBuffers == NULL || QuadBufferEnabled == GL_FALSE) {
 		real_glXSwapBuffers(dpy, drawable);
 	} else {
 		wrap_glXSwapBuffers(dpy, drawable);

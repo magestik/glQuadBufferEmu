@@ -14,8 +14,8 @@ void *libGL_handle, *libGLUT_handle;
 
 int QuadBufferMode;
 
-int QuadBufferHeight;
-int QuadBufferWidth;
+unsigned int QuadBufferHeight;
+unsigned int QuadBufferWidth;
 
 GLenum QuadBufferCurrent;
 GLboolean QuadBufferEnabled;
@@ -51,19 +51,22 @@ void QuadBufferEmuLoadLibs(void){
 		exit(1);
     }
     
+    real_glClear = dlsym_test(libGL_handle, "glClear");
 	real_glDrawBuffer = dlsym_test(libGL_handle, "glDrawBuffer");
 	real_glGetBooleanv = dlsym_test(libGL_handle, "glGetBooleanv");
+	real_glViewport = dlsym_test(libGL_handle, "glViewport");
 	
     real_glXChooseVisual = dlsym_test(libGL_handle, "glXChooseVisual");
+    real_glXMakeCurrent = dlsym_test(libGL_handle, "glXMakeCurrent");
 	real_glXSwapBuffers = dlsym_test(libGL_handle, "glXSwapBuffers");
-	
+
 	real_glutInitDisplayMode = dlsym_test(libGLUT_handle, "glutInitDisplayMode");
 	real_glutReshapeWindow = dlsym_test(libGLUT_handle, "glutReshapeWindow");
 }
 
 void QuadBufferEmuLoadConf(void){
-	QuadBufferHeight = 0;
-	QuadBufferWidth = 0;
+	QuadBufferHeight = 300;
+	QuadBufferWidth = 300;
 	
 	QuadBufferCurrent = GL_FRONT; // The initial value is GL_FRONT for single-buffered contexts, and GL_BACK for double-buffered contexts.
 	QuadBufferEnabled = GL_FALSE;
@@ -75,10 +78,16 @@ void QuadBufferEmuLoadConf(void){
 
 void QuadBufferEmuLoadMode(void)
 {
+	wrap_glClear = NULL;
 	wrap_glDrawBuffer = NULL;
+	wrap_glGetBooleanv = NULL;
+	wrap_glViewport = NULL;
+	
 	wrap_glXChooseVisual = NULL;
 	wrap_glXSwapBuffers = NULL;
+	
 	wrap_glutInitDisplayMode = NULL;
+	wrap_glutReshapeWindow = NULL;
 	
 	switch(QuadBufferMode){
 		case INTERLACED:

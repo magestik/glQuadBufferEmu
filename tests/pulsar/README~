@@ -1,1 +1,0 @@
-LD_PREDLOAD=<...> ./test -s
