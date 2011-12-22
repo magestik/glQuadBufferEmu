@@ -14,7 +14,9 @@ interlace_stencil(QuadBufferWidth, QuadBufferHeight);
 
 void interlace_stencil(int gliWindowWidth, int gliWindowHeight) {
 	int y;
-
+	
+	glEnable(GL_STENCIL_TEST);
+	
 	glClearStencil(0);
 	glClear(GL_STENCIL_BUFFER_BIT);
 	glStencilFunc(GL_ALWAYS, 1, 1);
@@ -22,7 +24,7 @@ void interlace_stencil(int gliWindowWidth, int gliWindowHeight) {
                                       
 	glColorMask( GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE );
 	
-	glEnable(GL_STENCIL_TEST);  
+	
 
 	for(y=0;y<gliWindowHeight;y+=2) {
 		glBegin(GL_LINES);
@@ -46,17 +48,17 @@ void interlace_stencil(int gliWindowWidth, int gliWindowHeight) {
 
 void interlaced_glDrawBuffer(GLenum mode) {
 	// http://www.gali-3d.com/archive/articles/StereoOpenGL/StereoscopicOpenGLTutorial.php
-	if( glIsEnabled(GL_STENCIL_TEST) ) glDisable(GL_STENCIL_TEST);
+
+	real_glDrawBuffer(mode);
+	
 	
 	if(QuadBufferCurrent == GL_BACK_LEFT || QuadBufferCurrent == GL_FRONT_LEFT || QuadBufferCurrent == GL_LEFT){
-		glEnable(GL_STENCIL_TEST);
-		glStencilFunc(GL_NOTEQUAL, 1, 1); // draws if stencil <> 1
+		//glStencilFunc(GL_NOTEQUAL, 1, 1); // draws if stencil <> 1
+		glDisable(GL_STENCIL_TEST);
 	} else {
-		glEnable(GL_STENCIL_TEST);
 		glStencilFunc(GL_EQUAL, 1, 1); // draws if stencil <> 0
-	}
-	
-	real_glDrawBuffer(mode);
+		glEnable(GL_STENCIL_TEST);
+	}	
 }
 
 XVisualInfo *interlaced_glXChooseVisual(Display *dpy, int screen, int *attribList){
