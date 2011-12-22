@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "glQuadBufferEmu.h"
 #include "wrappers.h"
 
 // Wrapper for glut - /usr/include/GL/freeglut_std.h
@@ -22,9 +21,9 @@ void glutInitDisplayMode (unsigned int displayMode){
 	displayMode = displayMode & ~GLUT_STEREO;
 	
 	if(wrap_glutInitDisplayMode == NULL || QuadBufferEnabled == GL_FALSE) {
-		return real_glutInitDisplayMode(displayMode);
+		real_glutInitDisplayMode(displayMode);
 	} else {
-		return wrap_glutInitDisplayMode(displayMode);
+		wrap_glutInitDisplayMode(displayMode);
 	}
 }
 
@@ -33,7 +32,6 @@ void glutReshapeWindow( int width, int height ){
 	QuadBufferHeight = height;
 	
 	fprintf(stderr, "glutReshapeWindow(%d, %d)\n", width, height);
-	
 	
 	if(wrap_glutReshapeWindow == NULL || QuadBufferEnabled == GL_FALSE) {
 		real_glutReshapeWindow(width, height);

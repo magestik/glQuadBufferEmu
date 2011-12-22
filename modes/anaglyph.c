@@ -1,6 +1,7 @@
-#include "../glQuadBufferEmu.h"
-#include "../wrappers.h"
+#include <stdio.h>
+#include <stdlib.h>
 
+#include "../wrappers.h"
 #include "anaglyph.h"
 
 void initAnaglyphMode(void){
@@ -14,7 +15,7 @@ void anaglyph_glDrawBuffer(GLenum mode) {
 	
 	real_glDrawBuffer(mode);
 	
-	if(QuadBufferCurrent == GL_BACK_LEFT || QuadBufferCurrent == GL_FRONT_LEFT){
+	if(QuadBufferCurrent == GL_BACK_LEFT || QuadBufferCurrent == GL_FRONT_LEFT || QuadBufferCurrent == GL_LEFT){
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glColorMask(GL_FALSE, GL_TRUE, GL_TRUE, GL_TRUE); // on laisse passer que le rouge
 	} else {

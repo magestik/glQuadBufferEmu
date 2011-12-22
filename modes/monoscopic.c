@@ -1,6 +1,7 @@
-#include "../glQuadBufferEmu.h"
-#include "../wrappers.h"
+#include <stdio.h>
+#include <stdlib.h>
 
+#include "../wrappers.h"
 #include "monoscopic.h"
 
 void initMonoscopicMode(void){
@@ -16,3 +17,4 @@ void monoscopic_glDrawBuffer(GLenum mode) {
 		real_glDrawBuffer(GL_NONE);
 	}
 }
+

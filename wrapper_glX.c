@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "glQuadBufferEmu.h"
 #include "wrappers.h"
 
 // Wrapper for glX - /usr/include/GL/glx.h

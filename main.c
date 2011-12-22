@@ -8,9 +8,10 @@
 #include "./modes/anaglyph.h"
 #include "./modes/interlaced.h"
 #include "./modes/side-by-side.h"
+#include "./modes/frame-sequential.h"
 
 /* globals */
-void *libGL_handle, *libGLUT_handle;
+void *libGL_handle, *libGLUT_handle, *libX11_handle;
 
 int QuadBufferMode;
 
@@ -44,16 +45,25 @@ void QuadBufferEmuLoadLibs(void){
 		fputs(dlerror(), stderr);
 		exit(1);
     }
-    
+   
 	libGLUT_handle = dlopen("/usr/lib/libglut.so", RTLD_LAZY);
 	if (!libGLUT_handle) {
 		fputs(dlerror(), stderr);
 		exit(1);
     }
     
+ 	libX11_handle = dlopen("/usr/lib/i386-linux-gnu/libX11.so.6", RTLD_LAZY);
+	if (!libX11_handle) {
+		fputs(dlerror(), stderr);
+		exit(1);
+    }  
+     
     real_glClear = dlsym_test(libGL_handle, "glClear");
 	real_glDrawBuffer = dlsym_test(libGL_handle, "glDrawBuffer");
 	real_glGetBooleanv = dlsym_test(libGL_handle, "glGetBooleanv");
+	real_glGetDoublev = dlsym_test(libGL_handle, "glGetDoublev");
+	real_glGetFloatv = dlsym_test(libGL_handle, "glGetFloatv");
+	real_glGetIntegerv = dlsym_test(libGL_handle, "glGetIntegerv");
 	real_glViewport = dlsym_test(libGL_handle, "glViewport");
 	
     real_glXChooseVisual = dlsym_test(libGL_handle, "glXChooseVisual");
@@ -62,6 +72,9 @@ void QuadBufferEmuLoadLibs(void){
 
 	real_glutInitDisplayMode = dlsym_test(libGLUT_handle, "glutInitDisplayMode");
 	real_glutReshapeWindow = dlsym_test(libGLUT_handle, "glutReshapeWindow");
+	
+	real_XCreateWindow = dlsym_test(libX11_handle, "XCreateWindow");
+	real_XDestroyWindow = dlsym_test(libX11_handle, "XDestroyWindow");
 }
 
 void QuadBufferEmuLoadConf(void){
@@ -72,7 +85,7 @@ void QuadBufferEmuLoadConf(void){
 	QuadBufferEnabled = GL_FALSE;
 	
 	// FIXME : parse ~/.stereoscopic.conf
-	QuadBufferMode = SIDEBYSIDE;
+	QuadBufferMode = FRAMESEQUENTIAL; // <- NE PAS UTILISER LE MODE SIDEBYSIDE POUR LE MOMENT !!!
 	DEBUG = GL_FALSE;
 }
 
@@ -81,15 +94,25 @@ void QuadBufferEmuLoadMode(void)
 	wrap_glClear = NULL;
 	wrap_glDrawBuffer = NULL;
 	wrap_glGetBooleanv = NULL;
+	wrap_glGetDoublev = NULL;
+	wrap_glGetFloatv = NULL;
+	wrap_glGetIntegerv = NULL;
 	wrap_glViewport = NULL;
 	
 	wrap_glXChooseVisual = NULL;
 	wrap_glXSwapBuffers = NULL;
-	
+
 	wrap_glutInitDisplayMode = NULL;
 	wrap_glutReshapeWindow = NULL;
 	
-	switch(QuadBufferMode){
+	wrap_XCreateWindow = NULL;
+	wrap_XDestroyWindow = NULL;
+	
+	switch(QuadBufferMode) {
+		case FRAMESEQUENTIAL:
+			initFrameSequentialMode();
+		break;
+		
 		case INTERLACED:
 			initInterlacedMode();
 		break;

@@ -1,12 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "glQuadBufferEmu.h"
 #include "wrappers.h"
 
 // Wrapper for GL - /usr/include/GL/gl.h
 
-void glClear(GLbitfield mask) {
+void glClear(GLbitfield mask) { // http://www.opengl.org/sdk/docs/man/xhtml/glClear.xml
+	if(DEBUG) fprintf(stderr, "glClear(.)\n");
+	
 	if(wrap_glClear == NULL || QuadBufferEnabled == GL_FALSE) {
 		real_glClear(mask);
 	} else {
@@ -15,6 +16,7 @@ void glClear(GLbitfield mask) {
 }
 
 void glDrawBuffer(GLenum mode) { // http://www.opengl.org/sdk/docs/man/xhtml/glDrawBuffer.xml
+	if(DEBUG) fprintf(stderr, "glDrawBuffer(.)\n");
 	
 	QuadBufferCurrent = mode;
 	
@@ -51,8 +53,6 @@ void glDrawBuffer(GLenum mode) { // http://www.opengl.org/sdk/docs/man/xhtml/glD
 			fprintf(stderr, "QuadBufferEmu Error : buffer mode not yet supported (using GL_BACK instead)\n");
 	}
 	
-	if(DEBUG) fprintf(stderr, "glDrawBuffer(.)\n");
-	
 	if(wrap_glDrawBuffer == NULL || QuadBufferEnabled == GL_FALSE) {
 		real_glDrawBuffer(mode);
 	} else {
@@ -60,16 +60,59 @@ void glDrawBuffer(GLenum mode) { // http://www.opengl.org/sdk/docs/man/xhtml/glD
 	}
 }
 
-void glGetBooleanv(GLenum pname, GLboolean * params) {	// http://www.opengl.org/sdk/docs/man/xhtml/glGetBooleanv.xml
-	if (pname == GL_STEREO) {
-		*params = GL_TRUE;
-	} else {
-		real_glGetBooleanv(pname, params);
+/* http://www.opengl.org/sdk/docs/man/xhtml/glGet.xml */
+
+void glGetBooleanv(GLenum pname, GLboolean * params) {
+	if(DEBUG) fprintf(stderr, "glGetBooleanv(.)\n");
+	
+	switch(pname) {
+		case GL_STEREO:
+			*params = GL_TRUE;
+		break;
+		
+		default:
+			if(wrap_glGetBooleanv == NULL || QuadBufferEnabled == GL_FALSE) {
+				real_glGetBooleanv(pname, params);
+			} else {
+				wrap_glGetBooleanv(pname, params);
+			}
 	}
 }
 
-void glViewport(GLint x, GLint y, GLsizei width, GLsizei height){
-	if(wrap_glDrawBuffer == NULL || QuadBufferEnabled == GL_FALSE) {
+void glGetDoublev(GLenum pname, GLdouble * params) {
+	if(DEBUG) fprintf(stderr, "glGetDoublev(.)\n");
+	
+	if(wrap_glGetDoublev == NULL || QuadBufferEnabled == GL_FALSE) {
+		real_glGetDoublev(pname, params);
+	} else {
+		wrap_glGetDoublev(pname, params);
+	}
+}
+
+void glGetFloatv(GLenum pname, GLfloat * params) {
+	if(DEBUG) fprintf(stderr, "glGetFloatv(.)\n");
+	
+	if(wrap_glGetFloatv == NULL || QuadBufferEnabled == GL_FALSE) {
+		real_glGetFloatv(pname, params);
+	} else {
+		wrap_glGetFloatv(pname, params);
+	}
+}
+
+void glGetIntegerv(GLenum pname, GLint * params) {
+	if(DEBUG) fprintf(stderr, "glGetIntegerv(.)\n");
+	
+	if(wrap_glGetIntegerv == NULL || QuadBufferEnabled == GL_FALSE) {
+		real_glGetIntegerv(pname, params);
+	} else {
+		wrap_glGetIntegerv(pname, params);
+	}
+}
+
+void glViewport(GLint x, GLint y, GLsizei width, GLsizei height) { // http://www.opengl.org/sdk/docs/man/xhtml/glViewport.xml
+	if(DEBUG) fprintf(stderr, "glViewport(%d, %d, %d, %d)\n", x, y, width, height);
+	
+	if(wrap_glViewport == NULL || QuadBufferEnabled == GL_FALSE) {
 		real_glViewport(x, y, width, height);
 	} else {
 		wrap_glViewport(x, y, width, height); // Side-By-Side
