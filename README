@@ -13,14 +13,13 @@ LD_PRELOAD=./glQuadBufferEmu.so glxgears -stereo
 TODO:
 - parse config file
 - switch from one mode to another
+- sync SwapBuffer with vblank (frame sequential)
+- new interlaced mode (vertical; horizontal; checkerboard ?)
+- Dubois algorithm in anaglyph mode
 
 Mode available:
 - Monoscopic (Left or Right),
 - Anaglyph (any color),
 - Side-by-side (Left/Right; Top/bottom; Frame-packing).
-
-Mode to come:
-- Interlaced
-
-Maybe later:
-- Nvidia 3D Vision (USB & DVI-3D)
+- Interlaced (is it working ?)
+- Frame sequential (software page-flipping)
