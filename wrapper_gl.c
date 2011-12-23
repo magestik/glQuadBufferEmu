@@ -111,6 +111,16 @@ void glGetIntegerv(GLenum pname, GLint * params) {
 	}
 }
 
+void glScissor(GLint x, GLint y, GLsizei width, GLsizei height) { // http://www.opengl.org/sdk/docs/man/xhtml/glScissor.xml
+	if(DEBUG) fprintf(stderr, "glScissor(%d, %d, %d, %d)\n", x, y, width, height);
+
+	if(wrap_glScissor == NULL || QuadBufferEnabled == GL_FALSE) {
+		real_glScissor(x, y, width, height);
+	} else {
+		wrap_glScissor(x, y, width, height); // Side-By-Side
+	}
+}
+
 void glViewport(GLint x, GLint y, GLsizei width, GLsizei height) { // http://www.opengl.org/sdk/docs/man/xhtml/glViewport.xml
 	if(DEBUG) fprintf(stderr, "glViewport(%d, %d, %d, %d)\n", x, y, width, height);
 

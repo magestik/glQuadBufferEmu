@@ -109,9 +109,6 @@ void QuadBufferEmuLoadMode(GLint m)
 	wrap_glutInitDisplayMode = NULL;
 	wrap_glutReshapeWindow = NULL;
 
-	wrap_XCreateWindow = NULL;
-	wrap_XDestroyWindow = NULL;
-
 	switch(m) {
 		case FRAMESEQUENTIAL:
 			initFrameSequentialMode();

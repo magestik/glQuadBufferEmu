@@ -7,7 +7,6 @@
 
 void handleEvent(XEvent *e){
 	char buffer[10];
-	int r;
          
 	switch(e->type){
 		case ConfigureNotify:
@@ -18,24 +17,23 @@ void handleEvent(XEvent *e){
 		
 		case KeyPress:
 			if(DEBUG) fprintf(stderr, "Key pressed\n"); // TODO: check "Print Screen" and "Escape"
-			r = XLookupString(&e->xkey, buffer, sizeof(buffer), NULL, NULL);
+			XLookupString(&e->xkey, buffer, sizeof(buffer), NULL, NULL);
             if (buffer[0] == 27) {
 				fprintf(stderr, "QuadBufferEmu : Exit\n");
-				exit(1);
+				exit(1); // outch !
             }
 		break;
 	}
 }
 
 Window XCreateWindow (Display *display, Window parent, int x, int y, unsigned int width, unsigned int height, unsigned int border_width, int depth, unsigned int class, Visual *visual, unsigned long valuemask, XSetWindowAttributes *attributes) {
+	if(DEBUG) fprintf(stderr, "XCreateWindow(.)\n");
 	
 	// http://www.xfree86.org/current/XCreateWindow.3.html
 	
 	QuadBufferHeight = height;
 	QuadBufferWidth = width;
-	
-	fprintf(stderr, "XCreateWindow(.)\n");
-	
+
 	if(wrap_XCreateWindow == NULL || QuadBufferEnabled == GL_FALSE) {
 		return real_XCreateWindow(display, parent, x, y, width, height, border_width, depth, class, visual, valuemask, attributes);
 	} else {
@@ -44,10 +42,9 @@ Window XCreateWindow (Display *display, Window parent, int x, int y, unsigned in
 }
 
 int XDestroyWindow (Display *display, Window w) {
+	if(DEBUG) fprintf(stderr, "XDestroyWindow(.)\n");
 	
 	// http://www.xfree86.org/current/XDestroyWindow.3.html
-	
-	fprintf(stderr, "XDestroyWindow(.)\n");
 
 	if(wrap_XDestroyWindow == NULL || QuadBufferEnabled == GL_FALSE) {
 		return real_XDestroyWindow(display, w);

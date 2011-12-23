@@ -31,6 +31,7 @@ extern void (*wrap_glGetBooleanv) (GLenum pname, GLboolean * params);
 extern void (*wrap_glGetDoublev) (GLenum pname, GLdouble * params);
 extern void (*wrap_glGetFloatv) (GLenum pname, GLfloat * params);
 extern void (*wrap_glGetIntegerv) (GLenum pname, GLint * params);
+extern void (*wrap_glScissor) (GLint x, GLint  y, GLsizei  width, GLsizei height);
 extern void (*wrap_glViewport) (GLint x, GLint y, GLsizei width, GLsizei height);
 
 extern XVisualInfo* (*wrap_glXChooseVisual) (Display *dpy, int screen, int *attribList);
@@ -49,6 +50,7 @@ extern void (*real_glGetBooleanv) (GLenum pname, GLboolean * params);
 extern void (*real_glGetDoublev) (GLenum pname, GLdouble * params);
 extern void (*real_glGetFloatv) (GLenum pname, GLfloat * params);
 extern void (*real_glGetIntegerv) (GLenum pname, GLint * params);
+extern void (*real_glScissor) (GLint x, GLint  y, GLsizei  width, GLsizei height);
 extern void (*real_glViewport) (GLint x, GLint y, GLsizei width, GLsizei height);
 
 extern XVisualInfo* (*real_glXChooseVisual) (Display *dpy, int screen, int *attribList);
