@@ -1,9 +1,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <time.h>
+#include <sys/time.h>
+
+#include <X11/Xlib.h>
+
 #include "wrappers.h"
 
 // Wrapper for glX - /usr/include/GL/glx.h
+
+void calcFPS() {
+	// TODO : calculer FPS
+}
 
 XVisualInfo *glXChooseVisual(Display *dpy, int screen, int *attribList){	
 	int wrapped_attribList[60]; // 60 is enough ?
@@ -38,26 +47,13 @@ XVisualInfo *glXChooseVisual(Display *dpy, int screen, int *attribList){
 		return wrap_glXChooseVisual(dpy, screen, wrapped_attribList);
 	}
 }
-
-Bool glXMakeCurrent( Display *dpy, GLXDrawable drawable, GLXContext ctx) {
-	Bool b;
-	//unsigned int v;
-	
-	fprintf(stderr, "glXMakeCurrent(.)\n");
-
-	b = real_glXMakeCurrent(dpy, drawable, ctx);
-	
-	if(ctx != NULL){
-		//glXQueryDrawable(dpy, drawable, GLX_WIDTH, &v);
-		//glXQueryDrawable(dpy, drawable, GLX_HEIGHT, &v);
-	}
-	
-	return b;
-}
-			    
+	    
 void glXSwapBuffers(Display * dpy, GLXDrawable drawable){
-	if(DEBUG) fprintf(stderr, "glXSwapBuffers(.)\n");
-	
+	if(DEBUG) {
+		fprintf(stderr, "glXSwapBuffers(.)\n");
+		calcFPS();
+	}
+    
 	if(wrap_glXSwapBuffers == NULL || QuadBufferEnabled == GL_FALSE) {
 		real_glXSwapBuffers(dpy, drawable);
 	} else {

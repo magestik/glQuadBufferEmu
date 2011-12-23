@@ -13,11 +13,9 @@
 #define SIDEBYSIDE		3
 #define INTERLACED		4
 
-// Debug
+// Config utilisateur
 extern GLboolean DEBUG;
-
-// Config
-extern int QuadBufferMode;
+extern GLint MODE;
 
 // Fonctionnement
 extern GLenum QuadBufferCurrent;
@@ -54,7 +52,6 @@ extern void (*real_glGetIntegerv) (GLenum pname, GLint * params);
 extern void (*real_glViewport) (GLint x, GLint y, GLsizei width, GLsizei height);
 
 extern XVisualInfo* (*real_glXChooseVisual) (Display *dpy, int screen, int *attribList);
-extern Bool (*real_glXMakeCurrent) (Display *dpy, GLXDrawable drawable, GLXContext ctx);
 extern void (*real_glXSwapBuffers) (Display * dpy, GLXDrawable drawable);
 
 extern void (*real_glutInitDisplayMode) (unsigned int displayMode);
@@ -62,3 +59,6 @@ extern void (*real_glutReshapeWindow) (int width, int height);
 
 extern Window (*real_XCreateWindow) (Display *display, Window parent, int x, int y, unsigned int width, unsigned int height, unsigned int border_width, int depth, unsigned int class, Visual *visual, unsigned long valuemask, XSetWindowAttributes *attributes);
 extern int (*real_XDestroyWindow) (Display *display, Window w);
+extern int (*real_XNextEvent) (Display *display, XEvent *event_return);
+extern int (*real_XPeekEvent) (Display *display, XEvent *event_return);
+extern int (*real_XWindowEvent) (Display *display, Window w, long event_mask, XEvent *event_return);

@@ -18,7 +18,6 @@ GLenum frameSequentialBuffer;
 
 void initFrameSequentialMode(void);
 void wait_vblank(void);
-Bool GLXExtensionSupported(Display *dpy, const char *extension);
 
 /* Transformation functions */
 void frameSequential_glDrawBuffer(GLenum mode);

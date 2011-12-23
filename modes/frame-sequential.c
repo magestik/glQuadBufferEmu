@@ -13,7 +13,6 @@ void initFrameSequentialMode(void){
 	wrap_glXSwapBuffers = frameSequential_glXSwapBuffers;
 }
 
-
 void frameSequential_glDrawBuffer(GLenum mode) {
 	if(QuadBufferCurrent == frameSequentialBuffer){
 		real_glDrawBuffer(mode);
@@ -22,9 +21,7 @@ void frameSequential_glDrawBuffer(GLenum mode) {
 	}
 }
 
-
 void frameSequential_glXSwapBuffers(Display * dpy, GLXDrawable drawable){
-	
 	if(frameSequentialBuffer == GL_BACK_LEFT){
 		frameSequentialBuffer = GL_BACK_RIGHT;
 	} else {
