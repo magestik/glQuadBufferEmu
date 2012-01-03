@@ -11,9 +11,22 @@
 #define INTERLACED		4
 #define FRAMESEQUENTIAL	5
 
+// Config utilisateur
+unsigned int QuadBufferHeight;
+unsigned int QuadBufferWidth;
+
+// Fonctionnement
+GLenum QuadBufferCurrent;
+GLboolean QuadBufferEnabled;
+
+GLint MODE;
+GLboolean DEBUG;
+
 /* link to transform functions */
 void (*wrap_glClear) (GLbitfield  mask);
 void (*wrap_glDrawBuffer) (GLenum mode);
+void (*wrap_glDisable) (GLenum  cap);
+void (*wrap_glEnable) (GLenum  cap);
 void (*wrap_glGetBooleanv) (GLenum pname, GLboolean * params);
 void (*wrap_glGetDoublev) (GLenum pname, GLdouble * params);
 void (*wrap_glGetFloatv) (GLenum pname, GLfloat * params);
@@ -33,6 +46,8 @@ int (*wrap_XDestroyWindow) (Display *display, Window w);
 /* link to real functions */
 void (*real_glClear) (GLbitfield  mask);
 void (*real_glDrawBuffer) (GLenum mode);
+void (*real_glDisable) (GLenum  cap);
+void (*real_glEnable) (GLenum  cap);
 void (*real_glGetBooleanv) (GLenum pname, GLboolean * params);
 void (*real_glGetDoublev) (GLenum pname, GLdouble * params);
 void (*real_glGetFloatv) (GLenum pname, GLfloat * params);

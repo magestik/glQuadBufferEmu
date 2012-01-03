@@ -10,21 +10,11 @@
 #include "./modes/side-by-side.h"
 #include "./modes/frame-sequential.h"
 
-/* globals */
 void *libGL_handle, *libGLUT_handle, *libX11_handle;
-
-unsigned int QuadBufferHeight;
-unsigned int QuadBufferWidth;
-
-GLenum QuadBufferCurrent;
-GLboolean QuadBufferEnabled;
-
-GLint MODE;
-GLboolean DEBUG;
+int loaded = 0;
 
 /* dsym with error checking */
-void *dlsym_test(void *lib, char *name)
-{
+void *dlsym_test(void *lib, char *name) {
 	char *error;
 	void *function = dlsym(lib, name);
 
@@ -37,9 +27,11 @@ void *dlsym_test(void *lib, char *name)
 }
 
 /* Init functions */
-void QuadBufferEmuLoadLibs(void){
+void QuadBufferEmuLoadLibs(void) {
 	fprintf(stderr, "QuadBufferEmuInit\n");
-
+	
+	//dlopen(NULL, RTLD_NOW | RTLD_GLOBAL);
+	
 	libGL_handle = dlopen("/usr/lib/i386-linux-gnu/libGL.so", RTLD_LAZY);
 	if (!libGL_handle) {
 		fputs(dlerror(), stderr);
@@ -60,6 +52,8 @@ void QuadBufferEmuLoadLibs(void){
 
 	real_glClear = dlsym_test(libGL_handle, "glClear");
 	real_glDrawBuffer = dlsym_test(libGL_handle, "glDrawBuffer");
+	real_glDisable = dlsym_test(libGL_handle, "glDisable");
+	real_glEnable = dlsym_test(libGL_handle, "glEnable");
 	real_glGetBooleanv = dlsym_test(libGL_handle, "glGetBooleanv");
 	real_glGetDoublev = dlsym_test(libGL_handle, "glGetDoublev");
 	real_glGetFloatv = dlsym_test(libGL_handle, "glGetFloatv");
@@ -80,22 +74,23 @@ void QuadBufferEmuLoadLibs(void){
 	real_XWindowEvent = dlsym_test(libX11_handle, "XWindowEvent");
 }
 
-void QuadBufferEmuLoadConf(void){
-	QuadBufferHeight = 300;
-	QuadBufferWidth = 300;
+void QuadBufferEmuLoadConf(void) {
+	QuadBufferHeight = 0;
+	QuadBufferWidth = 0;
 
 	QuadBufferCurrent = GL_FRONT; // The initial value is GL_FRONT for single-buffered contexts, and GL_BACK for double-buffered contexts.
 	QuadBufferEnabled = GL_FALSE;
 
 	// FIXME : parse ~/.stereoscopic.conf
-	MODE = FRAMESEQUENTIAL; // <- NE PAS UTILISER LE MODE SIDEBYSIDE POUR LE MOMENT !!!
+	MODE = ANAGLYPH;
 	DEBUG = GL_FALSE;
 }
 
-void QuadBufferEmuLoadMode(GLint m)
-{
+void QuadBufferEmuLoadMode(GLint m) {
 	wrap_glClear = NULL;
 	wrap_glDrawBuffer = NULL;
+	wrap_glDisable = NULL;
+	wrap_glEnable = NULL;
 	wrap_glGetBooleanv = NULL;
 	wrap_glGetDoublev = NULL;
 	wrap_glGetFloatv = NULL;
@@ -137,9 +132,11 @@ void QuadBufferEmuLoadMode(GLint m)
 	}
 }
 
-void QuadBufferEmuInit(void)
-{
-	QuadBufferEmuLoadLibs();
-	QuadBufferEmuLoadConf();
-	QuadBufferEmuLoadMode(MODE);
+void QuadBufferEmuInit(void) {
+	if(loaded == 0) {
+		loaded = 1;
+		QuadBufferEmuLoadLibs();
+		QuadBufferEmuLoadConf();
+		QuadBufferEmuLoadMode(MODE);
+	}
 }

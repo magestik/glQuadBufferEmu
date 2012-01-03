@@ -23,6 +23,9 @@ void handleEvent(XEvent *e){
 				exit(1); // outch !
             }
 		break;
+		
+		/*default:
+			 fprintf(stderr, "Unknown event\n");*/
 	}
 }
 

@@ -21,7 +21,7 @@ void initSideBySideMode(void){
 	wrap_XCreateWindow = sideBySide_XCreateWindow;
 }
 
-void setCorrectViewport(void){
+void setCorrectViewport(void) {
 
 	/* Top/Bottom */
 	setTopBottomViewport();
@@ -33,7 +33,7 @@ void setCorrectViewport(void){
 	//setFramePackedViewport();
 }
 
-void setTopBottomViewport(void){
+void setTopBottomViewport(void) {
 	leftViewport[0] = 0;
 	leftViewport[1] = 0;
 	leftViewport[2] = QuadBufferWidth;
@@ -45,7 +45,7 @@ void setTopBottomViewport(void){
 	rightViewport[3] = QuadBufferHeight/2;
 }
 
-void setLeftRightViewport(void){	
+void setLeftRightViewport(void) {	
 	leftViewport[0] = 0;
 	leftViewport[1] = 0;
 	leftViewport[2] = QuadBufferWidth/2;
@@ -57,7 +57,7 @@ void setLeftRightViewport(void){
 	rightViewport[3] = QuadBufferHeight;
 }
 
-void setFramePackedViewport(void){
+void setFramePackedViewport(void) {
 	leftViewport[0] = 0;
 	leftViewport[1] = 0;
 	leftViewport[2] = QuadBufferWidth;
@@ -104,7 +104,7 @@ void sideBySide_glGetIntegerv(GLenum pname, GLint * params) {
 	}
 }
 
-void sideBySide_glViewport(GLint x, GLint y, GLsizei width, GLsizei height){
+void sideBySide_glViewport(GLint x, GLint y, GLsizei width, GLsizei height) {
 	if (QuadBufferCurrent == GL_BACK_LEFT || QuadBufferCurrent == GL_FRONT_LEFT || QuadBufferCurrent == GL_LEFT) {
 		if( x < leftViewport[2] && y < leftViewport[3]){
 			real_glViewport(leftViewport[0]+x, leftViewport[1]+y, min(width, leftViewport[2]-x), min(height, leftViewport[3]-y));  // leftViewport[2], leftViewport[3]

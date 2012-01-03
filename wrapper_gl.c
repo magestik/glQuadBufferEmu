@@ -62,6 +62,28 @@ void glDrawBuffer(GLenum mode) { // http://www.opengl.org/sdk/docs/man/xhtml/glD
 	}
 }
 
+/* http://www.opengl.org/sdk/docs/man/xhtml/glEnable.xml */
+
+void glDisable(GLenum cap) {
+	if(DEBUG) fprintf(stderr, "glDisable(.)\n");
+
+	if(wrap_glDisable == NULL || QuadBufferEnabled == GL_FALSE) {
+		real_glDisable(cap);
+	} else {
+		wrap_glDisable(cap);
+	}
+}
+
+void glEnable(GLenum cap) {
+	if(DEBUG) fprintf(stderr, "glEnable(.)\n");
+
+	if(wrap_glEnable == NULL || QuadBufferEnabled == GL_FALSE) {
+		real_glEnable(cap);
+	} else {
+		wrap_glEnable(cap);
+	}
+}
+
 /* http://www.opengl.org/sdk/docs/man/xhtml/glGet.xml */
 
 void glGetBooleanv(GLenum pname, GLboolean * params) {

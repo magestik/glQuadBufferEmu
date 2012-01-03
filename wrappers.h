@@ -27,6 +27,8 @@ extern unsigned int QuadBufferWidth;
 /* Wrap functions */
 extern void (*wrap_glClear) (GLbitfield  mask);
 extern void (*wrap_glDrawBuffer) (GLenum mode);
+extern void (*wrap_glDisable) (GLenum cap);
+extern void (*wrap_glEnable) (GLenum cap);
 extern void (*wrap_glGetBooleanv) (GLenum pname, GLboolean * params);
 extern void (*wrap_glGetDoublev) (GLenum pname, GLdouble * params);
 extern void (*wrap_glGetFloatv) (GLenum pname, GLfloat * params);
@@ -46,6 +48,8 @@ extern int (*wrap_XDestroyWindow) (Display *display, Window w);
 /* Real functions */
 extern void (*real_glClear) (GLbitfield  mask);
 extern void (*real_glDrawBuffer) (GLenum mode);
+extern void (*real_glDisable) (GLenum cap);
+extern void (*real_glEnable) (GLenum cap);
 extern void (*real_glGetBooleanv) (GLenum pname, GLboolean * params);
 extern void (*real_glGetDoublev) (GLenum pname, GLdouble * params);
 extern void (*real_glGetFloatv) (GLenum pname, GLfloat * params);
