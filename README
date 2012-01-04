@@ -1,25 +1,52 @@
-Compile the wrapper and the demos:
-make all
+This projects aims to provide Quad-Buffer "emulation" for any OpenGL application.
+As you may know OpenGL is able to do Quad-Buffer Stereo for many years.
+But it only works with proffessionnal graphic cards, like Nvidia Quadro.
 
-Just compile the wrapper:
-make lib
+The goal of this project is to provide Quad-Buffer Stereo supports on non-Quad-buffered video cards.
+It is designed for devellopers who wants to do Stereo application in OpenGL without having to support every display in the market !
 
-Use it:
-LD_PRELOAD=./glQuadBufferEmu.so YourQuadBufferedApplication
+As a developer you just need to make a Quad-Buffered Stereo application.
+The users will have to install this OpenGL wrapper if they don't have a proffessionnal card.
+
+* * COMPILATION * *
+
+Compile the wrapper:
+$ make all
+
+Compile the demos:
+$ cd tests
+$ make all
+
+
+* * USABILITY * *
+
+How to use it :
+$ LD_PRELOAD=/location/glQuadBufferEmu.so YourQuadBufferedApplication
 
 Example of use: 
-LD_PRELOAD=./glQuadBufferEmu.so glxgears -stereo
+$ LD_PRELOAD=./glQuadBufferEmu.so glxgears -stereo
 
-TODO:
-- parse config file
-- switch from one mode to another
-- sync SwapBuffer with vblank (frame sequential)
-- new interlaced mode (vertical; horizontal; checkerboard ?)
-- Dubois algorithm in anaglyph mode
+You may want to make the lib available from any directory :
+$ cp glQuadBufferEmu.so /usr/lib
+
+Then you may use it just like that :
+$ LD_PRELOAD=glQuadBufferEmu.so glxgears -stereo
+
+
+* * CONFIGURATION * *
+
+Sorry, the wrapper is hardcoded for now !
+
+You can change the display mode in main.c. Search
+MODE = __________;
+
+And choose your display mode.
 
 Mode available:
-- Monoscopic (Left or Right),
-- Anaglyph (any color),
-- Side-by-side (Left/Right; Top/bottom; Frame-packing).
-- Interlaced (is it working ?)
-- Frame sequential (software page-flipping)
+- Monoscopic (Left or Right) [MONOSCOPIC],
+- Anaglyph (any color) [ANAGLYPH],
+- Side-by-side (Left/Right; Top/bottom; Frame-packing) [SIDEBYSIDE],
+- Interlaced (is it really working ?) [INTERLACED],
+- Frame-sequential (software page-flipping) [FRAMESEQUENTIAL].
+
+Sub-modes cannot be choosen easily for now ...

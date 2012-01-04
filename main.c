@@ -82,8 +82,9 @@ void QuadBufferEmuLoadConf(void) {
 	QuadBufferEnabled = GL_FALSE;
 
 	// FIXME : parse ~/.stereoscopic.conf
-	MODE = ANAGLYPH;
 	DEBUG = GL_FALSE;
+	
+	MODE = ANAGLYPH; // CHANGE THIS TO SUIT YOUR NEEDS
 }
 
 void QuadBufferEmuLoadMode(GLint m) {
