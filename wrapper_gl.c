@@ -16,45 +16,73 @@ void glClear(GLbitfield mask) { // http://www.opengl.org/sdk/docs/man/xhtml/glCl
 }
 
 void glDrawBuffer(GLenum mode) { // http://www.opengl.org/sdk/docs/man/xhtml/glDrawBuffer.xml
-	if(DEBUG) fprintf(stderr, "glDrawBuffer(.)\n");
-	
+	char *bname = "";
 	GLboolean wrap = GL_TRUE;
 	QuadBufferCurrent = mode;
 
 	switch(mode){
-		case GL_FRONT_LEFT:
-		case GL_FRONT_RIGHT:
+		// GL_ FRONT
 		case GL_FRONT:
+			bname = "GL_FRONT";
+			mode = GL_FRONT;
+		break;
+		
+		case GL_FRONT_LEFT:
+			bname = "GL_FRONT_LEFT";
+			mode = GL_FRONT;
+		break;
+		
+		case GL_FRONT_RIGHT:
+			bname = "GL_FRONT_RIGHT";
 			mode = GL_FRONT;
 		break;
 
-		case GL_BACK_LEFT:
-		case GL_BACK_RIGHT:
+		// GL_BACK
 		case GL_BACK:
+			bname = "GL_BACK";
+			mode = GL_BACK;
+		break;
+		
+		case GL_BACK_LEFT:
+			bname = "GL_BACK_LEFT";
+			mode = GL_BACK;
+		break;
+		
+		case GL_BACK_RIGHT:
+			bname = "GL_BACK_RIGHT";
 			mode = GL_BACK;
 		break;
 
+		// GL_FRONT_AND_BACK
 		case GL_FRONT_AND_BACK: // ALL 4 BUFFERS
+			bname = "GL_FRONT_AND_BACK";
+			mode = GL_FRONT_AND_BACK;
+		break;
+		
+		// GL_LEFT  = GL_FRONT_LEFT + GL_BACK_LEFT
+		case GL_LEFT: 
+			bname = "GL_LEFT";
+			mode = GL_FRONT_AND_BACK;
+		break;
+		
+		// GL_RIGHT = GL_FRONT_RIGHT + GL_BACK_RIGHT
+		case GL_RIGHT: 
+			bname = "GL_RIGHT";
 			mode = GL_FRONT_AND_BACK;
 		break;
 
-		case GL_LEFT: // GL_LEFT  = GL_FRONT_LEFT + GL_BACK_LEFT
-			// don't write in GL_FRONT_LEFT for now
-			QuadBufferCurrent = GL_BACK_LEFT;
-			mode = GL_BACK;
-		break;
-
-		case GL_RIGHT: // GL_RIGHT = GL_FRONT_RIGHT + GL_BACK_RIGHT
-			// don't write in GL_FRONT_RIGHT for now
-			QuadBufferCurrent = GL_BACK_RIGHT;
-			mode = GL_BACK;
-		break;
-
 		case GL_NONE:
+			bname = "GL_NONE";
+			wrap = GL_FALSE;
+		break;
+		
 		default: // GL_AUXi
+			bname = "GL_AUXi"; // we don't need to know i value
 			wrap = GL_FALSE;
 	}
-
+	
+	if(DEBUG) fprintf(stderr, "glDrawBuffer(%s)\n", bname);
+	
 	if(wrap_glDrawBuffer == NULL || QuadBufferEnabled == GL_FALSE || wrap == GL_FALSE) {
 		real_glDrawBuffer(mode);
 	} else {
@@ -125,11 +153,18 @@ void glGetFloatv(GLenum pname, GLfloat * params) {
 
 void glGetIntegerv(GLenum pname, GLint * params) {
 	if(DEBUG) fprintf(stderr, "glGetIntegerv(.)\n");
+	
+	switch(pname) {
+		case GL_DRAW_BUFFER:
+			*params = QuadBufferCurrent;
+		break;
 
-	if(wrap_glGetIntegerv == NULL || QuadBufferEnabled == GL_FALSE) {
-		real_glGetIntegerv(pname, params);
-	} else {
-		wrap_glGetIntegerv(pname, params);
+		default:
+			if(wrap_glGetIntegerv == NULL || QuadBufferEnabled == GL_FALSE) {
+				real_glGetIntegerv(pname, params);
+			} else {
+				wrap_glGetIntegerv(pname, params);
+			}
 	}
 }
 

@@ -482,7 +482,7 @@ def main():
 	#  RGBA color
 	# Alpha components supported
 	# Depth buffer
-	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH)
+	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH | GLUT_STEREO)
 
 	glutInitWindowSize(640, 480)
 

@@ -68,10 +68,10 @@ void anaglyph_glDrawBuffer(GLenum mode) {
 	real_glDrawBuffer(mode);
 	
 	if(QuadBufferCurrent == GL_BACK_LEFT || QuadBufferCurrent == GL_FRONT_LEFT || QuadBufferCurrent == GL_LEFT){
-		glClear(GL_DEPTH_BUFFER_BIT); // | GL_COLOR_BUFFER_BIT
-		glColorMask(anaglyphLeft[0], anaglyphLeft[1], anaglyphLeft[2], GL_TRUE);
+		real_glClear(GL_DEPTH_BUFFER_BIT); // | GL_COLOR_BUFFER_BIT
+		glColorMask(anaglyphLeft[0], anaglyphLeft[1], anaglyphLeft[2], GL_FALSE);
 	} else {
-		glClear(GL_DEPTH_BUFFER_BIT);
-		glColorMask(anaglyphRight[0], anaglyphRight[1], anaglyphRight[2], GL_TRUE);
+		real_glClear(GL_DEPTH_BUFFER_BIT);
+		glColorMask(anaglyphRight[0], anaglyphRight[1], anaglyphRight[2], GL_FALSE);
 	}
 }

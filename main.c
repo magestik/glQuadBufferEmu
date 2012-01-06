@@ -16,7 +16,7 @@ int loaded = 0;
 /* dsym with error checking */
 void *dlsym_test(void *lib, char *name) {
 	char *error;
-	void *function = dlsym(lib, name);
+	void *function = __libc_dlsym(lib, name);
 
 	if ((error = dlerror()) != NULL) {
 		fprintf(stderr, "%s\n", error);
@@ -63,7 +63,9 @@ void QuadBufferEmuLoadLibs(void) {
 
 	real_glXChooseVisual = dlsym_test(libGL_handle, "glXChooseVisual");
 	real_glXSwapBuffers = dlsym_test(libGL_handle, "glXSwapBuffers");
-
+	real_glXGetProcAddress = dlsym_test(libGL_handle, "glXGetProcAddress");
+	real_glXGetProcAddressARB = dlsym_test(libGL_handle, "glXGetProcAddressARB");
+	
 	real_glutInitDisplayMode = dlsym_test(libGLUT_handle, "glutInitDisplayMode");
 	real_glutReshapeWindow = dlsym_test(libGLUT_handle, "glutReshapeWindow");
 
@@ -82,9 +84,9 @@ void QuadBufferEmuLoadConf(void) {
 	QuadBufferEnabled = GL_FALSE;
 
 	// FIXME : parse ~/.stereoscopic.conf
-	DEBUG = GL_FALSE;
+	DEBUG = GL_TRUE;
 	
-	MODE = ANAGLYPH; // CHANGE THIS TO SUIT YOUR NEEDS
+	MODE = FRAMESEQUENTIAL; // CHANGE THIS TO SUIT YOUR NEEDS
 }
 
 void QuadBufferEmuLoadMode(GLint m) {

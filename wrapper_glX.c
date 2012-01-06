@@ -3,6 +3,7 @@
 
 #include <time.h>
 #include <sys/time.h>
+#include <string.h>
 
 #include <X11/Xlib.h>
 
@@ -47,7 +48,24 @@ XVisualInfo *glXChooseVisual(Display *dpy, int screen, int *attribList){
 		return wrap_glXChooseVisual(dpy, screen, wrapped_attribList);
 	}
 }
-	    
+
+void (*glXGetProcAddress(const GLubyte *procname))( void ) {
+	if(DEBUG) fprintf(stderr, "glXGetProcAddress(%s)\n", procname);
+	
+	if( !strcmp( (const char *)procname, "glDrawBuffer") ) {
+		return (void *)glDrawBuffer;
+	} else if( !strcmp( (const char *)procname, "glGetIntegerv") ) {
+		return (void *)glGetIntegerv;
+	} else {
+		return real_glXGetProcAddress(procname);
+	}
+}
+
+void (*glXGetProcAddressARB(const GLubyte *procname))( void ) {
+	if(DEBUG) fprintf(stderr, "glXGetProcAddressARB(%s)\n", procname);
+	return real_glXGetProcAddressARB(procname);
+}
+
 void glXSwapBuffers(Display * dpy, GLXDrawable drawable){
 	if(DEBUG) {
 		fprintf(stderr, "glXSwapBuffers(.)\n");

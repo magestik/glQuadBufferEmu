@@ -24,6 +24,8 @@ extern GLboolean QuadBufferEnabled;
 extern unsigned int QuadBufferHeight;
 extern unsigned int QuadBufferWidth;
 
+extern void *__libc_dlsym(void *__map, __const char *__name);
+
 /* Wrap functions */
 extern void (*wrap_glClear) (GLbitfield  mask);
 extern void (*wrap_glDrawBuffer) (GLenum mode);
@@ -59,6 +61,8 @@ extern void (*real_glViewport) (GLint x, GLint y, GLsizei width, GLsizei height)
 
 extern XVisualInfo* (*real_glXChooseVisual) (Display *dpy, int screen, int *attribList);
 extern void (*real_glXSwapBuffers) (Display * dpy, GLXDrawable drawable);
+extern void (*(*real_glXGetProcAddress)(const GLubyte *procname))( void );
+extern void (*(*real_glXGetProcAddressARB)(const GLubyte *procName))( void );
 
 extern void (*real_glutInitDisplayMode) (unsigned int displayMode);
 extern void (*real_glutReshapeWindow) (int width, int height);

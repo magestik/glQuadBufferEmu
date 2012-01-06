@@ -22,6 +22,8 @@ GLboolean QuadBufferEnabled;
 GLint MODE;
 GLboolean DEBUG;
 
+extern void *__libc_dlsym(void *__map, __const char *__name);
+
 /* link to transform functions */
 void (*wrap_glClear) (GLbitfield  mask);
 void (*wrap_glDrawBuffer) (GLenum mode);
@@ -57,6 +59,8 @@ void (*real_glViewport) (GLint x, GLint y, GLsizei width, GLsizei height);
 
 XVisualInfo* (*real_glXChooseVisual) (Display *dpy, int screen, int *attribList);
 void (*real_glXSwapBuffers) (Display * dpy, GLXDrawable drawable);
+void (*(*real_glXGetProcAddress) (const GLubyte *procname))( void );
+void (*(*real_glXGetProcAddressARB)(const GLubyte *procName))( void );
 
 void (*real_glutInitDisplayMode) (unsigned int displayMode);
 void (*real_glutReshapeWindow) (int width, int height);
