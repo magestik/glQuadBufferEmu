@@ -2,11 +2,42 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-extern void *__libc_dlsym(void *__map, __const char *__name); 
+#include <string.h>
+
+#include "wrappers.h"
+
+typedef void *(*dlsym_prototype)(void *, const char *);
 
 void *dlsym(void *handle, const char *symbol) {
-	fprintf(stderr, "dlsym(%s)\n", symbol);
-	return __libc_dlsym(handle, symbol);
-}
+	static void *hd;
+	static dlsym_prototype real_dlsym = NULL;
 
-// gcc -Wall -fPIC -shared -o dlsymWrapper.so dlsym.c -ldl
+	if (real_dlsym == NULL) {
+		hd = dlopen ("libdl.so", RTLD_NOW);
+
+		if (hd == NULL) {
+			puts ("dlopen Failed");
+			return (NULL);
+		}
+
+		real_dlsym = __libc_dlsym (hd, "dlsym");
+		if (real_dlsym == NULL) {
+			puts ("__libc_dlsym failed");
+			return (NULL);
+		}
+
+		puts ("link dlsym is SUCCESS");
+	}
+
+	printf("dlsym(%s)\n", symbol);
+
+	if( !strcmp( (const char *)symbol, "glDrawBuffer") ) {
+		return glDrawBuffer;
+	} else if( !strcmp( (const char *)symbol, "glGetIntegerv") ) {
+		return glGetIntegerv;
+	} else if( !strcmp( (const char *)symbol, "glutInitDisplayMode") ) {
+		return glutInitDisplayMode;
+	} else {
+		return (real_dlsym (handle, symbol));
+	}
+}

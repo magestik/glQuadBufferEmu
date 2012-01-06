@@ -4,6 +4,8 @@
 #include "../wrappers.h"
 #include "anaglyph.h"
 
+// Buffers: 9/9
+
 // http://paulbourke.net/texture_colour/anaglyph/
 
 void initAnaglyphMode(void){	
@@ -69,9 +71,13 @@ void anaglyph_glDrawBuffer(GLenum mode) {
 	
 	if(QuadBufferCurrent == GL_BACK_LEFT || QuadBufferCurrent == GL_FRONT_LEFT || QuadBufferCurrent == GL_LEFT){
 		real_glClear(GL_DEPTH_BUFFER_BIT); // | GL_COLOR_BUFFER_BIT
-		glColorMask(anaglyphLeft[0], anaglyphLeft[1], anaglyphLeft[2], GL_FALSE);
-	} else {
+		glColorMask(anaglyphLeft[0], anaglyphLeft[1], anaglyphLeft[2], GL_TRUE);
+	
+	} else if(QuadBufferCurrent == GL_BACK_RIGHT || QuadBufferCurrent == GL_FRONT_RIGHT || QuadBufferCurrent == GL_RIGHT){
 		real_glClear(GL_DEPTH_BUFFER_BIT);
-		glColorMask(anaglyphRight[0], anaglyphRight[1], anaglyphRight[2], GL_FALSE);
+		glColorMask(anaglyphRight[0], anaglyphRight[1], anaglyphRight[2], GL_TRUE);
+	
+	} else { // GL_FRONT, GL_BACK, GL_FRONT_AND_BACK
+		glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 	}
 }

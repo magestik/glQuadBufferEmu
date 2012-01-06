@@ -4,11 +4,10 @@
 #include "../wrappers.h"
 #include "side-by-side.h"
 
+// Buffers: 6/9 (TODO: GL_FRONT, GL_BACK, GL_FRONT_AND_BACK)
 
 void initSideBySideMode(void){
-	// TODO : viewport + GenLock for Nvidia 3D Vision
-	
-	// TODO : activate 3D mode for active shutter glasses
+	// TODO : Hardware page-flipping for active shutter glasses ( X server viewport + GenLock )
 	
 	setCorrectViewport();
 
@@ -82,12 +81,16 @@ void sideBySide_glDrawBuffer(GLenum mode) {
 
 	real_glDrawBuffer(mode);
 	
-	if (QuadBufferCurrent == GL_BACK_LEFT || QuadBufferCurrent == GL_FRONT_LEFT || QuadBufferCurrent == GL_LEFT) {
+	if(QuadBufferCurrent == GL_BACK_LEFT || QuadBufferCurrent == GL_FRONT_LEFT || QuadBufferCurrent == GL_LEFT){
 		real_glViewport(leftViewport[0], leftViewport[1], leftViewport[2], leftViewport[3]);
 		glScissor(leftViewport[0], leftViewport[1], leftViewport[2], leftViewport[3]);
-	} else {
+	
+	} else if(QuadBufferCurrent == GL_BACK_RIGHT || QuadBufferCurrent == GL_FRONT_RIGHT || QuadBufferCurrent == GL_RIGHT){
 		real_glViewport(rightViewport[0], rightViewport[1], rightViewport[2], rightViewport[3]);
 		glScissor(rightViewport[0], rightViewport[1], rightViewport[2], rightViewport[3]);
+		
+	} else { // GL_FRONT, GL_BACK, GL_FRONT_AND_BACK
+		fprintf(stderr, "WARNING: writing in (GL_FRONT, GL_BACK or GL_FRONT_AND_BACK) not yet supported in side-by-side\n");
 	}
 	
 	if( !glIsEnabled(GL_SCISSOR_TEST) ) glEnable(GL_SCISSOR_TEST);

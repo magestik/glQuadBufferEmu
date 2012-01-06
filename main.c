@@ -10,7 +10,7 @@
 #include "./modes/side-by-side.h"
 #include "./modes/frame-sequential.h"
 
-void *libGL_handle, *libGLUT_handle, *libX11_handle;
+void *libGL_handle, *libGLUT_handle, *libX11_handle, *libld_handle;
 int loaded = 0;
 
 /* dsym with error checking */
@@ -32,19 +32,19 @@ void QuadBufferEmuLoadLibs(void) {
 	
 	//dlopen(NULL, RTLD_NOW | RTLD_GLOBAL);
 	
-	libGL_handle = dlopen("/usr/lib/i386-linux-gnu/libGL.so", RTLD_LAZY);
+	libGL_handle = dlopen("libGL.so", RTLD_LAZY); // /usr/lib/i386-linux-gnu/libGL.so
 	if (!libGL_handle) {
 		fputs(dlerror(), stderr);
 		exit(1);
 	}
 
-	libGLUT_handle = dlopen("/usr/lib/libglut.so", RTLD_LAZY);
+	libGLUT_handle = dlopen("libglut.so", RTLD_LAZY); // /usr/lib/libglut.so
 	if (!libGLUT_handle) {
 		fputs(dlerror(), stderr);
 		exit(1);
 	}
 
-	libX11_handle = dlopen("/usr/lib/i386-linux-gnu/libX11.so.6", RTLD_LAZY);
+	libX11_handle = dlopen("libX11.so", RTLD_LAZY); // /usr/lib/i386-linux-gnu/libX11.so.6
 	if (!libX11_handle) {
 		fputs(dlerror(), stderr);
 		exit(1);
@@ -84,7 +84,7 @@ void QuadBufferEmuLoadConf(void) {
 	QuadBufferEnabled = GL_FALSE;
 
 	// FIXME : parse ~/.stereoscopic.conf
-	DEBUG = GL_TRUE;
+	DEBUG = GL_FALSE;
 	
 	MODE = FRAMESEQUENTIAL; // CHANGE THIS TO SUIT YOUR NEEDS
 }

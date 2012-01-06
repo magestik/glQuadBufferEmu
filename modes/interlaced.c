@@ -4,6 +4,8 @@
 #include "../wrappers.h"
 #include "interlaced.h"
 
+// Buffers: 6/9 (TODO: GL_FRONT, GL_BACK, GL_FRONT_AND_BACK)
+
 void initInterlacedMode(void){
 	// vertical ou horizontal ?
 interlace_stencil(QuadBufferWidth, QuadBufferHeight);
@@ -52,13 +54,17 @@ void interlaced_glDrawBuffer(GLenum mode) {
 	real_glDrawBuffer(mode);
 	
 	
-	if(QuadBufferCurrent == GL_BACK_LEFT || QuadBufferCurrent == GL_FRONT_LEFT || QuadBufferCurrent == GL_LEFT){
-		//glStencilFunc(GL_NOTEQUAL, 1, 1); // draws if stencil <> 1
+	if(QuadBufferCurrent == GL_BACK_LEFT || QuadBufferCurrent == GL_FRONT_LEFT || QuadBufferCurrent == GL_LEFT) {
+		glStencilFunc(GL_NOTEQUAL, 1, 1); // draws if stencil <> 1
 		glDisable(GL_STENCIL_TEST);
-	} else {
+	
+	} else if(QuadBufferCurrent == GL_BACK_RIGHT || QuadBufferCurrent == GL_FRONT_RIGHT || QuadBufferCurrent == GL_RIGHT){
 		glStencilFunc(GL_EQUAL, 1, 1); // draws if stencil <> 0
 		glEnable(GL_STENCIL_TEST);
-	}	
+		
+	} else { // GL_FRONT, GL_BACK, GL_FRONT_AND_BACK
+		fprintf(stderr, "WARNING: writing in (GL_FRONT, GL_BACK or GL_FRONT_AND_BACK) not yet supported in interlaced\n");
+	}
 }
 
 XVisualInfo *interlaced_glXChooseVisual(Display *dpy, int screen, int *attribList){
