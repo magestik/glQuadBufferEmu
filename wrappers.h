@@ -24,6 +24,8 @@ extern GLboolean QuadBufferEnabled;
 extern unsigned int QuadBufferHeight;
 extern unsigned int QuadBufferWidth;
 
+extern void *findWrapFunction(const char *symbol);
+
 extern void *__libc_dlsym(void *__map, __const char *__name);
 
 /* Wrap functions */

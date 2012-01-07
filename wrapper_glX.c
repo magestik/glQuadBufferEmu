@@ -52,10 +52,10 @@ XVisualInfo *glXChooseVisual(Display *dpy, int screen, int *attribList){
 void (*glXGetProcAddress(const GLubyte *procname))( void ) {
 	if(DEBUG) fprintf(stderr, "glXGetProcAddress(%s)\n", procname);
 	
-	if( !strcmp( (const char *)procname, "glDrawBuffer") ) {
-		return (void *)glDrawBuffer;
-	} else if( !strcmp( (const char *)procname, "glGetIntegerv") ) {
-		return (void *)glGetIntegerv;
+	void *r = findWrapFunction((const char *)procname);
+	
+	if( r != NULL ) {
+		return r;
 	} else {
 		return real_glXGetProcAddress(procname);
 	}
@@ -63,7 +63,14 @@ void (*glXGetProcAddress(const GLubyte *procname))( void ) {
 
 void (*glXGetProcAddressARB(const GLubyte *procname))( void ) {
 	if(DEBUG) fprintf(stderr, "glXGetProcAddressARB(%s)\n", procname);
-	return real_glXGetProcAddressARB(procname);
+
+	void *r = findWrapFunction((const char *)procname);
+	
+	if( r != NULL ) {
+		return r;
+	} else {
+		return real_glXGetProcAddressARB(procname);
+	}
 }
 
 void glXSwapBuffers(Display * dpy, GLXDrawable drawable){

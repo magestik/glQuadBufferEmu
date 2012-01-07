@@ -2,8 +2,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <string.h>
-
 #include "wrappers.h"
 
 typedef void *(*dlsym_prototype)(void *, const char *);
@@ -12,6 +10,8 @@ void *dlsym(void *handle, const char *symbol) {
 	static void *hd;
 	static dlsym_prototype real_dlsym = NULL;
 
+	void *r;
+	
 	if (real_dlsym == NULL) {
 		hd = dlopen ("libdl.so", RTLD_NOW);
 
@@ -31,12 +31,9 @@ void *dlsym(void *handle, const char *symbol) {
 
 	printf("dlsym(%s)\n", symbol);
 
-	if( !strcmp( (const char *)symbol, "glDrawBuffer") ) {
-		return glDrawBuffer;
-	} else if( !strcmp( (const char *)symbol, "glGetIntegerv") ) {
-		return glGetIntegerv;
-	} else if( !strcmp( (const char *)symbol, "glutInitDisplayMode") ) {
-		return glutInitDisplayMode;
+	r = findWrapFunction(symbol);
+	if( r != NULL ) {
+		return r;
 	} else {
 		return (real_dlsym (handle, symbol));
 	}

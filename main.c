@@ -1,6 +1,7 @@
 #include <dlfcn.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "glQuadBufferEmu.h"
 
@@ -141,5 +142,18 @@ void QuadBufferEmuInit(void) {
 		QuadBufferEmuLoadLibs();
 		QuadBufferEmuLoadConf();
 		QuadBufferEmuLoadMode(MODE);
+	}
+}
+
+void *findWrapFunction(const char *symbol){
+
+	if( !strcmp(symbol, "glDrawBuffer") ) {
+		return glDrawBuffer;
+	} else if( !strcmp(symbol, "glGetIntegerv") ) {
+		return glGetIntegerv;
+	} else if( !strcmp(symbol, "glutInitDisplayMode") ) {
+		return glutInitDisplayMode;
+	} else {
+		return NULL;
 	}
 }

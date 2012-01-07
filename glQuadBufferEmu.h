@@ -22,6 +22,8 @@ GLboolean QuadBufferEnabled;
 GLint MODE;
 GLboolean DEBUG;
 
+void *findWrapFunction(const char *symbol);
+	
 extern void *__libc_dlsym(void *__map, __const char *__name);
 
 /* link to transform functions */
