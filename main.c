@@ -11,27 +11,10 @@
 #include "./modes/side-by-side.h"
 #include "./modes/frame-sequential.h"
 
-void *libGL_handle, *libGLUT_handle, *libX11_handle, *libld_handle;
-int loaded = 0;
+void *libGL_handle, *libGLUT_handle, *libX11_handle;
 
-/* dsym with error checking */
-void *dlsym_test(void *lib, char *name) {
-	char *error;
-	void *function = __libc_dlsym(lib, name);
-
-	if ((error = dlerror()) != NULL) {
-		fprintf(stderr, "%s\n", error);
-		exit(1);
-	}
-
-	return function;
-}
-
-/* Init functions */
+/* Loading all function we want to wrap */
 void QuadBufferEmuLoadLibs(void) {
-	fprintf(stderr, "QuadBufferEmuInit\n");
-	
-	//dlopen(NULL, RTLD_NOW | RTLD_GLOBAL);
 	
 	libGL_handle = dlopen("libGL.so", RTLD_LAZY); // /usr/lib/i386-linux-gnu/libGL.so
 	if (!libGL_handle) {
@@ -50,7 +33,7 @@ void QuadBufferEmuLoadLibs(void) {
 		fputs(dlerror(), stderr);
 		exit(1);
 	}
-
+	
 	real_glClear = dlsym_test(libGL_handle, "glClear");
 	real_glDrawBuffer = dlsym_test(libGL_handle, "glDrawBuffer");
 	real_glDisable = dlsym_test(libGL_handle, "glDisable");
@@ -77,17 +60,25 @@ void QuadBufferEmuLoadLibs(void) {
 	real_XWindowEvent = dlsym_test(libX11_handle, "XWindowEvent");
 }
 
-void QuadBufferEmuLoadConf(void) {
-	QuadBufferHeight = 0;
-	QuadBufferWidth = 0;
 
-	QuadBufferCurrent = GL_FRONT; // The initial value is GL_FRONT for single-buffered contexts, and GL_BACK for double-buffered contexts.
-	QuadBufferEnabled = GL_FALSE;
-
-	// FIXME : parse ~/.stereoscopic.conf
-	DEBUG = GL_FALSE;
+/* Returning our wrap function to dlsym or glXGetProcAdress*/
+void *QuadBufferEmuFindFunction(const char *symbol){
+	int i = 0;
 	
-	MODE = FRAMESEQUENTIAL; // CHANGE THIS TO SUIT YOUR NEEDS
+	while( i < NB_WRAP_FUNCTIONS ) {
+		if( !strcmp(wrap[i].symbol, symbol) ) {
+			return wrap[i].handle;
+		}
+		
+		i++;
+	}
+
+	return NULL;
+}
+
+void QuadBufferEmuLoadConf(void) { // FIXME : parse ~/.stereoscopic.conf
+	DEBUG = GL_FALSE;
+	MODE = SIDEBYSIDE;
 }
 
 void QuadBufferEmuLoadMode(GLint m) {
@@ -131,29 +122,19 @@ void QuadBufferEmuLoadMode(GLint m) {
 
 		case NONE:
 		default:
-			fprintf(stderr, "Mode not supported !\n");
+			fprintf(stderr, "Quad-Buffer Stereo Wrapper: Mode not supported !\n");
 			exit(1);
 	}
 }
 
 void QuadBufferEmuInit(void) {
-	if(loaded == 0) {
-		loaded = 1;
-		QuadBufferEmuLoadLibs();
-		QuadBufferEmuLoadConf();
-		QuadBufferEmuLoadMode(MODE);
-	}
+	fprintf(stderr, "Quad-Buffer Stereo Wrapper: LOAD\n");
+	
+	QuadBufferEmuLoadConf();	
+	QuadBufferEmuLoadLibs();
+	QuadBufferEmuLoadMode(MODE);
 }
 
-void *findWrapFunction(const char *symbol){
-
-	if( !strcmp(symbol, "glDrawBuffer") ) {
-		return glDrawBuffer;
-	} else if( !strcmp(symbol, "glGetIntegerv") ) {
-		return glGetIntegerv;
-	} else if( !strcmp(symbol, "glutInitDisplayMode") ) {
-		return glutInitDisplayMode;
-	} else {
-		return NULL;
-	}
+void QuadBufferEmuExit(void) {
+	fprintf(stderr, "Quad-Buffer Stereo Wrapper: UNLOAD\n");
 }

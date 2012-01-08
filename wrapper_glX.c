@@ -3,7 +3,6 @@
 
 #include <time.h>
 #include <sys/time.h>
-#include <string.h>
 
 #include <X11/Xlib.h>
 
@@ -52,7 +51,7 @@ XVisualInfo *glXChooseVisual(Display *dpy, int screen, int *attribList){
 void (*glXGetProcAddress(const GLubyte *procname))( void ) {
 	if(DEBUG) fprintf(stderr, "glXGetProcAddress(%s)\n", procname);
 	
-	void *r = findWrapFunction((const char *)procname);
+	void *r = QuadBufferEmuFindFunction((const char *)procname);
 	
 	if( r != NULL ) {
 		return r;
@@ -64,7 +63,7 @@ void (*glXGetProcAddress(const GLubyte *procname))( void ) {
 void (*glXGetProcAddressARB(const GLubyte *procname))( void ) {
 	if(DEBUG) fprintf(stderr, "glXGetProcAddressARB(%s)\n", procname);
 
-	void *r = findWrapFunction((const char *)procname);
+	void *r = QuadBufferEmuFindFunction((const char *)procname);
 	
 	if( r != NULL ) {
 		return r;

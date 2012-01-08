@@ -19,8 +19,8 @@ void handleEvent(XEvent *e){
 			if(DEBUG) fprintf(stderr, "Key pressed\n"); // TODO: check "Print Screen" and "Escape"
 			XLookupString(&e->xkey, buffer, sizeof(buffer), NULL, NULL);
             if (buffer[0] == 27) {
-				fprintf(stderr, "QuadBufferEmu : Exit\n");
-				exit(1); // outch !
+				//fprintf(stderr, "QuadBufferEmu : Exit\n");
+				//exit(1); // outch !
             }
 		break;
 		

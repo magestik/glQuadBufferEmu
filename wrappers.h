@@ -6,27 +6,26 @@
 #define min(x1,x2) ((x1) > (x2) ? (x2):(x1))
 #define max(x1,x2) ((x1) < (x2) ? (x2):(x1))
 
-// Constantes
+/* Constants */
 #define NONE			0
 #define MONOSCOPIC		1
 #define ANAGLYPH		2
 #define SIDEBYSIDE		3
 #define INTERLACED		4
 
-// Config utilisateur
-extern GLboolean DEBUG;
-extern GLint MODE;
+/* Global var */
+extern unsigned int QuadBufferHeight;
+extern unsigned int QuadBufferWidth;
+extern GLboolean QuadBufferFullscreen;
 
-// Fonctionnement
 extern GLenum QuadBufferCurrent;
 extern GLboolean QuadBufferEnabled;
 
-extern unsigned int QuadBufferHeight;
-extern unsigned int QuadBufferWidth;
+/* Options */
+extern GLint MODE;
+extern GLboolean DEBUG;
 
-extern void *findWrapFunction(const char *symbol);
-
-extern void *__libc_dlsym(void *__map, __const char *__name);
+extern void *QuadBufferEmuFindFunction(const char *symbol);
 
 /* Wrap functions */
 extern void (*wrap_glClear) (GLbitfield  mask);
