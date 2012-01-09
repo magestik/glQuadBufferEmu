@@ -15,6 +15,8 @@ void setFramePackedViewport(void);
 int leftViewport[4];
 int rightViewport[4];
 
+int ratio[2];
+
 /* Transformation functions */
 void sideBySide_glDrawBuffer(GLenum mode);
 void sideBySide_glGetIntegerv(GLenum pname, GLint * params);

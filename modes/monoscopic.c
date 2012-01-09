@@ -7,7 +7,7 @@
 // Buffers: 9/9
 
 void initMonoscopicMode(void){
-	monoscopicBuffer = GL_LEFT;
+	monoscopicBuffer = GL_RIGHT;
 	
 	wrap_glDrawBuffer = monoscopic_glDrawBuffer;
 }

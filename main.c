@@ -78,7 +78,7 @@ void *QuadBufferEmuFindFunction(const char *symbol){
 
 void QuadBufferEmuLoadConf(void) { // FIXME : parse ~/.stereoscopic.conf
 	DEBUG = GL_FALSE;
-	MODE = SIDEBYSIDE;
+	MODE = MONOSCOPIC;
 }
 
 void QuadBufferEmuLoadMode(GLint m) {
@@ -130,7 +130,7 @@ void QuadBufferEmuLoadMode(GLint m) {
 void QuadBufferEmuInit(void) {
 	fprintf(stderr, "Quad-Buffer Stereo Wrapper: LOAD\n");
 	
-	QuadBufferEmuLoadConf();	
+	QuadBufferEmuLoadConf();
 	QuadBufferEmuLoadLibs();
 	QuadBufferEmuLoadMode(MODE);
 }
