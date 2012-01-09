@@ -11,19 +11,13 @@
 #include "./modes/side-by-side.h"
 #include "./modes/frame-sequential.h"
 
-void *libGL_handle, *libGLUT_handle, *libX11_handle;
+void *libGL_handle, *libX11_handle;
 
 /* Loading all function we want to wrap */
 void QuadBufferEmuLoadLibs(void) {
 	
 	libGL_handle = dlopen("libGL.so", RTLD_LAZY); // /usr/lib/i386-linux-gnu/libGL.so
 	if (!libGL_handle) {
-		fputs(dlerror(), stderr);
-		exit(1);
-	}
-
-	libGLUT_handle = dlopen("libglut.so", RTLD_LAZY); // /usr/lib/libglut.so
-	if (!libGLUT_handle) {
 		fputs(dlerror(), stderr);
 		exit(1);
 	}
@@ -45,13 +39,11 @@ void QuadBufferEmuLoadLibs(void) {
 	real_glScissor = dlsym_test(libGL_handle, "glScissor");
 	real_glViewport = dlsym_test(libGL_handle, "glViewport");
 
+	real_glXChooseFBConfig = dlsym_test(libGL_handle, "glXChooseFBConfig");
 	real_glXChooseVisual = dlsym_test(libGL_handle, "glXChooseVisual");
 	real_glXSwapBuffers = dlsym_test(libGL_handle, "glXSwapBuffers");
 	real_glXGetProcAddress = dlsym_test(libGL_handle, "glXGetProcAddress");
 	real_glXGetProcAddressARB = dlsym_test(libGL_handle, "glXGetProcAddressARB");
-	
-	real_glutInitDisplayMode = dlsym_test(libGLUT_handle, "glutInitDisplayMode");
-	real_glutReshapeWindow = dlsym_test(libGLUT_handle, "glutReshapeWindow");
 
 	real_XCreateWindow = dlsym_test(libX11_handle, "XCreateWindow");
 	real_XDestroyWindow = dlsym_test(libX11_handle, "XDestroyWindow");
@@ -78,7 +70,7 @@ void *QuadBufferEmuFindFunction(const char *symbol){
 
 void QuadBufferEmuLoadConf(void) { // FIXME : parse ~/.stereoscopic.conf
 	DEBUG = GL_FALSE;
-	MODE = MONOSCOPIC;
+	MODE = SIDEBYSIDE;
 }
 
 void QuadBufferEmuLoadMode(GLint m) {
@@ -93,11 +85,9 @@ void QuadBufferEmuLoadMode(GLint m) {
 	wrap_glScissor = NULL;
 	wrap_glViewport = NULL;
 
+	wrap_glXChooseFBConfig = NULL;
 	wrap_glXChooseVisual = NULL;
 	wrap_glXSwapBuffers = NULL;
-
-	wrap_glutInitDisplayMode = NULL;
-	wrap_glutReshapeWindow = NULL;
 
 	switch(m) {
 		case FRAMESEQUENTIAL:

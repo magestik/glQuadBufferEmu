@@ -1,7 +1,6 @@
 #include <GL/glx.h>
 #include <GL/gl.h>
 #include <GL/glu.h>
-#include <GL/glut.h>
 
 /* Constants */
 #define NONE			0
@@ -17,7 +16,7 @@ unsigned int QuadBufferWidth = 0;
 GLboolean QuadBufferFullscreen = GL_FALSE;
 
 GLenum QuadBufferCurrent = GL_FRONT; // The initial value is GL_FRONT for single-buffered contexts, and GL_BACK for double-buffered contexts.
-GLboolean QuadBufferEnabled = GL_FALSE; // GL_TRUE when glutInitDisplayMode(GLUT_STEREO) or glXChooseVisual(GLX_STEREO).
+GLboolean QuadBufferEnabled = GL_FALSE; // GL_TRUE when glXChooseVisual(GLX_STEREO)
 
 /* Options */
 GLint MODE;
@@ -32,7 +31,7 @@ struct handleName {
 	const char *symbol;
 };
 
-#define NB_WRAP_FUNCTIONS 21
+#define NB_WRAP_FUNCTIONS 20
 
 struct handleName wrap[NB_WRAP_FUNCTIONS ] = {
 	{ glClear, "glClear" },
@@ -45,12 +44,11 @@ struct handleName wrap[NB_WRAP_FUNCTIONS ] = {
 	{ glGetIntegerv, "glGetIntegerv" },
 	{ glScissor, "glScissor" },
 	{ glViewport, "glViewport" },
+	{ glXChooseFBConfig , "glXChooseFBConfig" },
 	{ glXChooseVisual, "glXChooseVisual" },
 	{ glXSwapBuffers, "glXSwapBuffers"},
 	{ glXGetProcAddress, "glXGetProcAddress" },
 	{ glXGetProcAddressARB, "glXGetProcAddressARB" },
-	{ glutInitDisplayMode, "glutInitDisplayMode" },
-	{ glutReshapeWindow, "glutReshapeWindow" },
 	{ XCreateWindow, "XCreateWindow" },
 	{ XDestroyWindow, "XDestroyWindow" },
 	{ XNextEvent, "XNextEvent" },
@@ -70,11 +68,9 @@ void (*wrap_glGetIntegerv) (GLenum pname, GLint * params);
 void (*wrap_glScissor) (GLint x, GLint  y, GLsizei  width, GLsizei height);
 void (*wrap_glViewport) (GLint x, GLint y, GLsizei width, GLsizei height);
 
+GLXFBConfig* (*wrap_glXChooseFBConfig) (Display *dpy,  int screen, const int * attrib_list,  int * nelements);
 XVisualInfo* (*wrap_glXChooseVisual) (Display *dpy, int screen, int *attribList);
 void (*wrap_glXSwapBuffers) (Display * dpy, GLXDrawable drawable);
-
-void (*wrap_glutInitDisplayMode) (unsigned int displayMode);
-void (*wrap_glutReshapeWindow) (int width, int height);
 
 Window (*wrap_XCreateWindow) (Display *display, Window parent, int x, int y, unsigned int width, unsigned int height, unsigned int border_width, int depth, unsigned int class, Visual *visual, unsigned long valuemask, XSetWindowAttributes *attributes);
 int (*wrap_XDestroyWindow) (Display *display, Window w);
@@ -91,13 +87,11 @@ void (*real_glGetIntegerv) (GLenum pname, GLint * params);
 void (*real_glScissor) (GLint x, GLint  y, GLsizei  width, GLsizei height);
 void (*real_glViewport) (GLint x, GLint y, GLsizei width, GLsizei height);
 
+GLXFBConfig* (*real_glXChooseFBConfig) (Display *dpy,  int screen, const int * attrib_list, int * nelements);
 XVisualInfo* (*real_glXChooseVisual) (Display *dpy, int screen, int *attribList);
 void (*real_glXSwapBuffers) (Display * dpy, GLXDrawable drawable);
 void (*(*real_glXGetProcAddress) (const GLubyte *procname))( void );
 void (*(*real_glXGetProcAddressARB)(const GLubyte *procName))( void );
-
-void (*real_glutInitDisplayMode) (unsigned int displayMode);
-void (*real_glutReshapeWindow) (int width, int height);
 
 Window (*real_XCreateWindow) (Display *display, Window parent, int x, int y, unsigned int width, unsigned int height, unsigned int border_width, int depth, unsigned int class, Visual *visual, unsigned long valuemask, XSetWindowAttributes *attributes);
 int (*real_XDestroyWindow) (Display *display, Window w);

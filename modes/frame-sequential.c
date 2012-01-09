@@ -19,7 +19,13 @@ struct nvstusb_context *ctx = 0;
 
 void initFrameSequentialMode(void){
 	frameSequentialBuffer = GL_LEFT;
-
+	
+	if (getenv ("__GL_SYNC_TO_VBLANK")) {
+		fprintf (stderr, "__GL_SYNC_TO_VBLANK defined\n");
+	} else {
+		fprintf (stderr, "No sync method !!!\n");
+	}
+  
 	wrap_glDrawBuffer = frameSequential_glDrawBuffer;
 	wrap_glXSwapBuffers = frameSequential_glXSwapBuffers;
 }

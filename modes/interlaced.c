@@ -8,10 +8,10 @@
 
 void initInterlacedMode(void){
 	// vertical ou horizontal ?
-interlace_stencil(QuadBufferWidth, QuadBufferHeight);
+	interlace_stencil(QuadBufferWidth, QuadBufferHeight);
+
 	wrap_glDrawBuffer = interlaced_glDrawBuffer;
 	wrap_glXChooseVisual = interlaced_glXChooseVisual;
-	wrap_glutInitDisplayMode = interlaced_glutInitDisplayMode;
 }
 
 void interlace_stencil(int gliWindowWidth, int gliWindowHeight) {
@@ -85,8 +85,4 @@ XVisualInfo *interlaced_glXChooseVisual(Display *dpy, int screen, int *attribLis
 
 	r = real_glXChooseVisual(dpy, screen, attribList);
 	return r;
-}
-
-void interlaced_glutInitDisplayMode(unsigned int displayMode) {
-	real_glutInitDisplayMode(displayMode | GLUT_STENCIL);
 }

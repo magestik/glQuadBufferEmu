@@ -1,7 +1,6 @@
 #include <GL/glx.h>
 #include <GL/gl.h>
 #include <GL/glu.h>
-#include <GL/glut.h>
 
 #define min(x1,x2) ((x1) > (x2) ? (x2):(x1))
 #define max(x1,x2) ((x1) < (x2) ? (x2):(x1))
@@ -39,11 +38,9 @@ extern void (*wrap_glGetIntegerv) (GLenum pname, GLint * params);
 extern void (*wrap_glScissor) (GLint x, GLint  y, GLsizei  width, GLsizei height);
 extern void (*wrap_glViewport) (GLint x, GLint y, GLsizei width, GLsizei height);
 
+GLXFBConfig* (*wrap_glXChooseFBConfig) (Display *dpy,  int screen, const int * attrib_list, int * nelements);
 extern XVisualInfo* (*wrap_glXChooseVisual) (Display *dpy, int screen, int *attribList);
 extern void (*wrap_glXSwapBuffers) (Display * dpy, GLXDrawable drawable);
-
-extern void (*wrap_glutInitDisplayMode) (unsigned int displayMode);
-extern void (*wrap_glutReshapeWindow) (int width, int height);
 
 extern Window (*wrap_XCreateWindow) (Display *display, Window parent, int x, int y, unsigned int width, unsigned int height, unsigned int border_width, int depth, unsigned int class, Visual *visual, unsigned long valuemask, XSetWindowAttributes *attributes);
 extern int (*wrap_XDestroyWindow) (Display *display, Window w);
@@ -60,13 +57,11 @@ extern void (*real_glGetIntegerv) (GLenum pname, GLint * params);
 extern void (*real_glScissor) (GLint x, GLint  y, GLsizei  width, GLsizei height);
 extern void (*real_glViewport) (GLint x, GLint y, GLsizei width, GLsizei height);
 
+GLXFBConfig* (*real_glXChooseFBConfig) (Display *dpy,  int screen, const int * attrib_list, int * nelements);
 extern XVisualInfo* (*real_glXChooseVisual) (Display *dpy, int screen, int *attribList);
 extern void (*real_glXSwapBuffers) (Display * dpy, GLXDrawable drawable);
 extern void (*(*real_glXGetProcAddress)(const GLubyte *procname))( void );
 extern void (*(*real_glXGetProcAddressARB)(const GLubyte *procName))( void );
-
-extern void (*real_glutInitDisplayMode) (unsigned int displayMode);
-extern void (*real_glutReshapeWindow) (int width, int height);
 
 extern Window (*real_XCreateWindow) (Display *display, Window parent, int x, int y, unsigned int width, unsigned int height, unsigned int border_width, int depth, unsigned int class, Visual *visual, unsigned long valuemask, XSetWindowAttributes *attributes);
 extern int (*real_XDestroyWindow) (Display *display, Window w);

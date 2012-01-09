@@ -13,8 +13,6 @@ void initSideBySideMode(void){
 	wrap_glGetIntegerv = sideBySide_glGetIntegerv;
 	wrap_glViewport = sideBySide_glViewport;
 	
-	wrap_glutReshapeWindow = sideBySide_glutReshapeWindow;
-	
 	wrap_XCreateWindow = sideBySide_XCreateWindow;
 }
 
@@ -121,18 +119,8 @@ void sideBySide_glViewport(GLint x, GLint y, GLsizei width, GLsizei height) {
 	}
 }
 
-/* GLUT */
-void sideBySide_glutReshapeWindow(int width, int height) {
-	setCorrectViewport();
-	real_glutReshapeWindow(width, height);
-}
-
 /* X11 */
 Window sideBySide_XCreateWindow(Display *display, Window parent, int x, int y, unsigned int width, unsigned int height, unsigned int border_width, int depth, unsigned int class, Visual *visual, unsigned long valuemask, XSetWindowAttributes *attributes) {
-
-	// XCreateWindow called by :
-	// - the program itself if the program is not using GLUT
-	// - glutCreateWindow if the program is using GLUT
 	
 	/*
 	XF86VidModeModeInfo **modes;
