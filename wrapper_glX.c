@@ -21,10 +21,15 @@ GLXFBConfig *glXChooseFBConfig(Display *dpy, int screen, const int *attrib_list,
 	while(attrib_list[i] != None) {
 		
 		if(attrib_list[i] == GLX_STEREO) {
-			requested++;
-			if(attrib_list[i+1] == True || attrib_list[i+1] == False) {
+			
+			if(attrib_list[i+1] == True) {
+				requested += 2;
+			} else if(attrib_list[i+1] != False) {
 				requested++;
+			} else { // attrib_list[i+1] == False
+				//QuadBufferEnabled = GL_FALSE;
 			}
+			
 		} else {
 			wrapped_attribList[i-requested] = attrib_list[i];
 		}
@@ -81,6 +86,28 @@ XVisualInfo *glXChooseVisual(Display *dpy, int screen, int *attribList){
 		return real_glXChooseVisual(dpy, screen, wrapped_attribList);
 	} else {
 		return wrap_glXChooseVisual(dpy, screen, wrapped_attribList);
+	}
+}
+
+int glXGetConfig(Display *dpy, XVisualInfo *vis, int attrib, int *value) {
+	if(attrib == GLX_STEREO){
+		*value = True;
+		return 0;
+	} else {
+		return real_glXGetConfig(dpy, vis, attrib, value);
+	}
+}
+
+int glXGetFBConfigAttrib(Display *dpy, GLXFBConfig config, int attribute, int *value) {
+	if(attribute == GLX_STEREO){
+		if(QuadBufferEnabled == GL_TRUE) {
+			*value = True;
+		} else {
+			*value = False;
+		}
+		return 0;
+	} else {
+		return real_glXGetFBConfigAttrib(dpy, config, attribute, value);
 	}
 }
 

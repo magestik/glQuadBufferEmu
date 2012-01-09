@@ -2,15 +2,16 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 
-#define min(x1,x2) ((x1) > (x2) ? (x2):(x1))
-#define max(x1,x2) ((x1) < (x2) ? (x2):(x1))
-
 /* Constants */
 #define NONE			0
 #define MONOSCOPIC		1
 #define ANAGLYPH		2
 #define SIDEBYSIDE		3
 #define INTERLACED		4
+
+/* User var */
+extern GLint MODE;
+extern GLboolean DEBUG;
 
 /* Global var */
 extern unsigned int QuadBufferHeight;
@@ -19,10 +20,6 @@ extern GLboolean QuadBufferFullscreen;
 
 extern GLenum QuadBufferCurrent;
 extern GLboolean QuadBufferEnabled;
-
-/* Options */
-extern GLint MODE;
-extern GLboolean DEBUG;
 
 extern void *QuadBufferEmuFindFunction(const char *symbol);
 
@@ -60,6 +57,8 @@ extern void (*real_glViewport) (GLint x, GLint y, GLsizei width, GLsizei height)
 GLXFBConfig* (*real_glXChooseFBConfig) (Display *dpy,  int screen, const int * attrib_list, int * nelements);
 extern XVisualInfo* (*real_glXChooseVisual) (Display *dpy, int screen, int *attribList);
 extern void (*real_glXSwapBuffers) (Display * dpy, GLXDrawable drawable);
+extern int (*real_glXGetConfig) (Display *dpy, XVisualInfo *vis, int attrib, int *value);
+extern int (*real_glXGetFBConfigAttrib) (Display *dpy,  GLXFBConfig config, int attribute,  int *value);
 extern void (*(*real_glXGetProcAddress)(const GLubyte *procname))( void );
 extern void (*(*real_glXGetProcAddressARB)(const GLubyte *procName))( void );
 

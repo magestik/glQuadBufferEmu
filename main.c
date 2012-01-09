@@ -11,20 +11,73 @@
 #include "./modes/side-by-side.h"
 #include "./modes/frame-sequential.h"
 
-void *libGL_handle, *libX11_handle;
+void *libGL_handle, *libX11_handle, *libdl_handle;
+
+/* dlsym with error checking */
+void *dlsym_test(void *lib, char *name) {
+	char *error;
+	void *function = real_dlsym(lib, name);
+
+	if ((error = dlerror()) != NULL) {
+		fprintf(stderr, "%s\n", error);
+		exit(1);
+	}
+
+	return function;
+}
+
+/* dlsym wrapper */
+void *dlsym(void *handle, const char *symbol) {
+	void *r = QuadBufferEmuFindFunction(symbol);
+	
+	printf("dlsym(%s)\n", symbol);
+	
+	if( r != NULL ) {
+		return r;
+	} else {
+		return (real_dlsym (handle, symbol));
+	}
+}
+
+/* Returning our wrap function to dlsym or glXGetProcAdress*/
+void *QuadBufferEmuFindFunction(const char *symbol){
+	int i = 0;
+	
+	while( i < NB_WRAP_FUNCTIONS ) {
+		if( !strcmp(wrap[i].symbol, symbol) ) {
+			return wrap[i].handle;
+		}
+		
+		i++;
+	}
+
+	return NULL;
+}
 
 /* Loading all function we want to wrap */
 void QuadBufferEmuLoadLibs(void) {
 	
-	libGL_handle = dlopen("libGL.so", RTLD_LAZY); // /usr/lib/i386-linux-gnu/libGL.so
+	libGL_handle = dlopen("libGL.so", RTLD_LAZY);
 	if (!libGL_handle) {
 		fputs(dlerror(), stderr);
 		exit(1);
 	}
 
-	libX11_handle = dlopen("libX11.so", RTLD_LAZY); // /usr/lib/i386-linux-gnu/libX11.so.6
+	libX11_handle = dlopen("libX11.so", RTLD_LAZY);
 	if (!libX11_handle) {
 		fputs(dlerror(), stderr);
+		exit(1);
+	}
+	
+	libdl_handle = dlopen("libdl.so", RTLD_LAZY);
+	if (!libdl_handle) {
+		fputs(dlerror(), stderr);
+		exit(1);
+	}
+
+	real_dlsym = __libc_dlsym(libdl_handle, "dlsym");
+	if (real_dlsym == NULL) {
+		fputs("__libc_dlsym failed", stderr);
 		exit(1);
 	}
 	
@@ -42,6 +95,8 @@ void QuadBufferEmuLoadLibs(void) {
 	real_glXChooseFBConfig = dlsym_test(libGL_handle, "glXChooseFBConfig");
 	real_glXChooseVisual = dlsym_test(libGL_handle, "glXChooseVisual");
 	real_glXSwapBuffers = dlsym_test(libGL_handle, "glXSwapBuffers");
+	real_glXGetConfig = dlsym_test(libGL_handle, "glXGetConfig");
+	real_glXGetFBConfigAttrib = dlsym_test(libGL_handle, "glXGetFBConfigAttrib");
 	real_glXGetProcAddress = dlsym_test(libGL_handle, "glXGetProcAddress");
 	real_glXGetProcAddressARB = dlsym_test(libGL_handle, "glXGetProcAddressARB");
 
@@ -52,25 +107,9 @@ void QuadBufferEmuLoadLibs(void) {
 	real_XWindowEvent = dlsym_test(libX11_handle, "XWindowEvent");
 }
 
-
-/* Returning our wrap function to dlsym or glXGetProcAdress*/
-void *QuadBufferEmuFindFunction(const char *symbol){
-	int i = 0;
-	
-	while( i < NB_WRAP_FUNCTIONS ) {
-		if( !strcmp(wrap[i].symbol, symbol) ) {
-			return wrap[i].handle;
-		}
-		
-		i++;
-	}
-
-	return NULL;
-}
-
 void QuadBufferEmuLoadConf(void) { // FIXME : parse ~/.stereoscopic.conf
 	DEBUG = GL_FALSE;
-	MODE = SIDEBYSIDE;
+	MODE = FRAMESEQUENTIAL;
 }
 
 void QuadBufferEmuLoadMode(GLint m) {
@@ -118,7 +157,7 @@ void QuadBufferEmuLoadMode(GLint m) {
 }
 
 void QuadBufferEmuInit(void) {
-	fprintf(stderr, "Quad-Buffer Stereo Wrapper: LOAD\n");
+	printf("Quad-Buffer Stereo Wrapper: LOAD\n");
 	
 	QuadBufferEmuLoadConf();
 	QuadBufferEmuLoadLibs();
@@ -126,5 +165,5 @@ void QuadBufferEmuInit(void) {
 }
 
 void QuadBufferEmuExit(void) {
-	fprintf(stderr, "Quad-Buffer Stereo Wrapper: UNLOAD\n");
+	printf("Quad-Buffer Stereo Wrapper: UNLOAD\n");
 }

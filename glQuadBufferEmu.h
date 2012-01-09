@@ -10,6 +10,10 @@
 #define INTERLACED		4
 #define FRAMESEQUENTIAL	5
 
+/* User var */
+GLint MODE;
+GLboolean DEBUG;
+
 /* Global var */
 unsigned int QuadBufferHeight = 0;
 unsigned int QuadBufferWidth = 0;
@@ -18,22 +22,30 @@ GLboolean QuadBufferFullscreen = GL_FALSE;
 GLenum QuadBufferCurrent = GL_FRONT; // The initial value is GL_FRONT for single-buffered contexts, and GL_BACK for double-buffered contexts.
 GLboolean QuadBufferEnabled = GL_FALSE; // GL_TRUE when glXChooseVisual(GLX_STEREO)
 
-/* Options */
-GLint MODE;
+/* Init functions */
+void *QuadBufferEmuFindFunction(const char *symbol);
+void QuadBufferEmuLoadLibs(void);
+void QuadBufferEmuLoadConf(void);
+void QuadBufferEmuLoadMode(GLint m);
 
-GLboolean DEBUG;
+void QuadBufferEmuInit(void);
+void QuadBufferEmuExit(void);
 
-/* dlsym */
+
+/* dlsym wrap */
 extern void *dlsym_test(void *lib, char *name);
+
+extern void *__libc_dlsym(void *__map, __const char *__name);
+void* (*real_dlsym) (void *, const char *);
 
 struct handleName {
 	void *handle;
 	const char *symbol;
 };
 
-#define NB_WRAP_FUNCTIONS 20
+#define NB_WRAP_FUNCTIONS 21
 
-struct handleName wrap[NB_WRAP_FUNCTIONS ] = {
+struct handleName wrap[NB_WRAP_FUNCTIONS] = {
 	{ glClear, "glClear" },
 	{ glDrawBuffer, "glDrawBuffer" },
 	{ glDisable, "glDisable" },
@@ -47,6 +59,7 @@ struct handleName wrap[NB_WRAP_FUNCTIONS ] = {
 	{ glXChooseFBConfig , "glXChooseFBConfig" },
 	{ glXChooseVisual, "glXChooseVisual" },
 	{ glXSwapBuffers, "glXSwapBuffers"},
+	{ glXGetConfig, "glXGetConfig" },
 	{ glXGetProcAddress, "glXGetProcAddress" },
 	{ glXGetProcAddressARB, "glXGetProcAddressARB" },
 	{ XCreateWindow, "XCreateWindow" },
@@ -55,6 +68,7 @@ struct handleName wrap[NB_WRAP_FUNCTIONS ] = {
 	{ XPeekEvent, "XPeekEvent" },
 	{ XWindowEvent, "XWindowEvent" }
 };
+
 
 /* link to transform functions */
 void (*wrap_glClear) (GLbitfield  mask);
@@ -90,6 +104,8 @@ void (*real_glViewport) (GLint x, GLint y, GLsizei width, GLsizei height);
 GLXFBConfig* (*real_glXChooseFBConfig) (Display *dpy,  int screen, const int * attrib_list, int * nelements);
 XVisualInfo* (*real_glXChooseVisual) (Display *dpy, int screen, int *attribList);
 void (*real_glXSwapBuffers) (Display * dpy, GLXDrawable drawable);
+int (*real_glXGetConfig) (Display *dpy, XVisualInfo *vis, int attrib, int *value);
+int (*real_glXGetFBConfigAttrib) (Display *dpy,  GLXFBConfig config, int attribute,  int *value);
 void (*(*real_glXGetProcAddress) (const GLubyte *procname))( void );
 void (*(*real_glXGetProcAddressARB)(const GLubyte *procName))( void );
 

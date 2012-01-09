@@ -31,7 +31,7 @@ void monoscopic_glDrawBuffer(GLenum mode) {
 				real_glDrawBuffer(mode);
 			} else {
 				real_glDrawBuffer(GL_NONE);
-			}	
+			}
 		break;
 
 		default: // GL_FRONT, GL_BACK, GL_FRONT_AND_BACK
