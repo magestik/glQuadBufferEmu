@@ -16,7 +16,7 @@ void *libGL_handle, *libX11_handle, *libdl_handle;
 /* dlsym with error checking */
 void *dlsym_test(void *lib, char *name) {
 	char *error;
-	void *function = real_dlsym(lib, name);
+	void *function = __libc_dlsym(lib, name);
 
 	if ((error = dlerror()) != NULL) {
 		fprintf(stderr, "%s\n", error);
@@ -35,7 +35,7 @@ void *dlsym(void *handle, const char *symbol) {
 	if( r != NULL ) {
 		return r;
 	} else {
-		return (real_dlsym (handle, symbol));
+		return (__libc_dlsym(handle, symbol));
 	}
 }
 
