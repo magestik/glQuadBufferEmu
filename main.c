@@ -11,33 +11,7 @@
 #include "./modes/side-by-side.h"
 #include "./modes/frame-sequential.h"
 
-void *libGL_handle, *libX11_handle, *libdl_handle;
-
-/* dlsym with error checking */
-void *dlsym_test(void *lib, char *name) {
-	char *error;
-	void *function = __libc_dlsym(lib, name);
-
-	if ((error = dlerror()) != NULL) {
-		fprintf(stderr, "%s\n", error);
-		exit(1);
-	}
-
-	return function;
-}
-
-/* dlsym wrapper */
-void *dlsym(void *handle, const char *symbol) {
-	void *r = QuadBufferEmuFindFunction(symbol);
-	
-	printf("dlsym(%s)\n", symbol);
-	
-	if( r != NULL ) {
-		return r;
-	} else {
-		return (__libc_dlsym(handle, symbol));
-	}
-}
+void *libGL_handle, *libX11_handle;
 
 /* Returning our wrap function to dlsym or glXGetProcAdress*/
 void *QuadBufferEmuFindFunction(const char *symbol){
@@ -66,18 +40,6 @@ void QuadBufferEmuLoadLibs(void) {
 	libX11_handle = dlopen("libX11.so", RTLD_LAZY);
 	if (!libX11_handle) {
 		fputs(dlerror(), stderr);
-		exit(1);
-	}
-	
-	libdl_handle = dlopen("libdl.so", RTLD_LAZY);
-	if (!libdl_handle) {
-		fputs(dlerror(), stderr);
-		exit(1);
-	}
-
-	real_dlsym = __libc_dlsym(libdl_handle, "dlsym");
-	if (real_dlsym == NULL) {
-		fputs("__libc_dlsym failed", stderr);
 		exit(1);
 	}
 	

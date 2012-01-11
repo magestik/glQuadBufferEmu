@@ -35,9 +35,6 @@ void QuadBufferEmuExit(void);
 /* dlsym wrap */
 extern void *dlsym_test(void *lib, char *name);
 
-extern void *__libc_dlsym(void *__map, __const char *__name);
-void* (*real_dlsym) (void *, const char *);
-
 struct handleName {
 	void *handle;
 	const char *symbol;
