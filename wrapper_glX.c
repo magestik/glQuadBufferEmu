@@ -129,7 +129,7 @@ int glXGetFBConfigAttrib(Display *dpy, GLXFBConfig config, int attribute, int *v
     return ret;
 }
 
-void (*glXGetProcAddress(const GLubyte *procname))( void ) {
+void (*glXGetProcAddress(const GLubyte *procname)) (void) {
     #ifdef DEBUG
         fprintf(stderr, "glXGetProcAddress(%s)\n", procname);
     #endif

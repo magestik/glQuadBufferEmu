@@ -53,31 +53,32 @@ struct handleName wrap[NB_WRAP_FUNCTIONS] = {
 /* Returning our wrap function to dlsym or glXGetProcAdress*/
 void *QuadBufferEmuFindFunction(const char *symbol){
     int i = 0;
+    void* ret = NULL;
 
-    while( i < NB_WRAP_FUNCTIONS ) {
+    while( i < NB_WRAP_FUNCTIONS && ret == NULL) {
         if( !strcmp(wrap[i].symbol, symbol) ) {
-            return wrap[i].handle;
+            ret = wrap[i].handle;
         }
 
         i++;
     }
 
-    return NULL;
+    return ret;
 }
 
 /* Loading all function we want to wrap */
 void QuadBufferEmuLoadLibs(void) {
 
     libGL_handle = dlopen("libGL.so", RTLD_LAZY);
-    if (!libGL_handle) {
+    if (libGL_handle == NULL) {
         fputs(dlerror(), stderr);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 
     libX11_handle = dlopen("libX11.so", RTLD_LAZY);
-    if (!libX11_handle) {
+    if (libX11_handle == NULL) {
         fputs(dlerror(), stderr);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 
     real_glClear = dlsym_test(libGL_handle, "glClear");

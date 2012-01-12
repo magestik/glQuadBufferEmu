@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "wrappers.h"
+#include "wrapper_X11.h"
 
 // Wrapper for X11 - /usr/include/X11/Xlib.h
 

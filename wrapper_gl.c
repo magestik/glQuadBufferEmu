@@ -1,11 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "wrappers.h"
+#include "wrapper_gl.h"
 
 // Wrapper for GL - /usr/include/GL/gl.h
 
-void glClear(GLbitfield mask) { // http://www.opengl.org/sdk/docs/man/xhtml/glClear.xml
+/* http://www.opengl.org/sdk/docs/man/xhtml/glClear.xml */
+void glClear(GLbitfield mask) {
     #ifdef DEBUG
         fprintf(stderr, "glClear(.)\n");
     #endif
@@ -17,11 +18,11 @@ void glClear(GLbitfield mask) { // http://www.opengl.org/sdk/docs/man/xhtml/glCl
     }
 }
 
-void glDrawBuffer(GLenum mode) { // http://www.opengl.org/sdk/docs/man/xhtml/glDrawBuffer.xml
+/* http://www.opengl.org/sdk/docs/man/xhtml/glDrawBuffer.xml */
+void glDrawBuffer(GLenum mode) {
+    const char *bname;
     GLboolean wrap = GL_TRUE;
     QuadBufferCurrent = mode;
-    
-    const char *bname;
     (void) bname; /* to avoid boring "not used" warning */
 
     switch(mode)
@@ -105,7 +106,20 @@ void glDrawBuffer(GLenum mode) { // http://www.opengl.org/sdk/docs/man/xhtml/glD
     }
 }
 
+
+
 /* http://www.opengl.org/sdk/docs/man/xhtml/glEnable.xml */
+void glEnable(GLenum cap) {
+    #ifdef DEBUG
+        fprintf(stderr, "glEnable(.)\n");
+    #endif
+
+    if(wrap_glEnable == NULL || QuadBufferEnabled == GL_FALSE) {
+        real_glEnable(cap);
+    } else {
+        wrap_glEnable(cap);
+    }
+}
 
 void glDisable(GLenum cap) {
     #ifdef DEBUG
@@ -119,17 +133,6 @@ void glDisable(GLenum cap) {
     }
 }
 
-void glEnable(GLenum cap) {
-    #ifdef DEBUG
-        fprintf(stderr, "glEnable(.)\n");
-    #endif
-
-    if(wrap_glEnable == NULL || QuadBufferEnabled == GL_FALSE) {
-        real_glEnable(cap);
-    } else {
-        wrap_glEnable(cap);
-    }
-}
 
 /* http://www.opengl.org/sdk/docs/man/xhtml/glGet.xml */
 
@@ -195,7 +198,8 @@ void glGetIntegerv(GLenum pname, GLint * params) {
     }
 }
 
-void glScissor(GLint x, GLint y, GLsizei width, GLsizei height) { // http://www.opengl.org/sdk/docs/man/xhtml/glScissor.xml
+// http://www.opengl.org/sdk/docs/man/xhtml/glScissor.xml
+void glScissor(GLint x, GLint y, GLsizei width, GLsizei height) {
     #ifdef DEBUG
         fprintf(stderr, "glScissor(%d, %d, %d, %d)\n", x, y, width, height);
     #endif
@@ -207,7 +211,8 @@ void glScissor(GLint x, GLint y, GLsizei width, GLsizei height) { // http://www.
     }
 }
 
-void glViewport(GLint x, GLint y, GLsizei width, GLsizei height) { // http://www.opengl.org/sdk/docs/man/xhtml/glViewport.xml
+// http://www.opengl.org/sdk/docs/man/xhtml/glViewport.xml
+void glViewport(GLint x, GLint y, GLsizei width, GLsizei height) {
     #ifdef DEBUG
         fprintf(stderr, "glViewport(%d, %d, %d, %d)\n", x, y, width, height);
     #endif
