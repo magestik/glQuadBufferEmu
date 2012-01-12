@@ -1,26 +1,40 @@
+#ifndef H__GLQUADBUFFEREMU
+#define H__GLQUADBUFFEREMU
+
 #include <GL/glx.h>
 #include <GL/gl.h>
 #include <GL/glu.h>
 
-/* Constants */
-#define NONE			0
-#define MONOSCOPIC		1
-#define ANAGLYPH		2
-#define SIDEBYSIDE		3
-#define INTERLACED		4
-#define FRAMESEQUENTIAL	5
+typedef enum
+{
+    NONE,
+    MONOSCOPIC,
+    ANAGLYPH,
+    SIDEBYSIDE,
+    INTERLACED,
+    FRAMESEQUENTIAL,
+    N_STEREO_MODE
+} STEREO_MODE;
+
+#define NB_WRAP_FUNCTIONS 21
+
+typedef struct handleName {
+    void *handle;
+    const char *symbol;
+} HANDLENAME;
 
 /* User var */
-GLint MODE;
-GLboolean DEBUG;
+STEREO_MODE MODE;
 
-/* Global var */
-unsigned int QuadBufferHeight = 0;
-unsigned int QuadBufferWidth = 0;
-GLboolean QuadBufferFullscreen = GL_FALSE;
+/* Global var */ /* gaffe à l'implementation dans un header */
+extern HANDLENAME wrap[NB_WRAP_FUNCTIONS];
 
-GLenum QuadBufferCurrent = GL_FRONT; // The initial value is GL_FRONT for single-buffered contexts, and GL_BACK for double-buffered contexts.
-GLboolean QuadBufferEnabled = GL_FALSE; // GL_TRUE when glXChooseVisual(GLX_STEREO)
+extern unsigned int QuadBufferHeight;
+extern unsigned int QuadBufferWidth;
+extern GLboolean QuadBufferFullscreen;
+
+extern GLenum QuadBufferCurrent; // The initial value is GL_FRONT for single-buffered contexts, and GL_BACK for double-buffered contexts.
+extern GLboolean QuadBufferEnabled; // GL_TRUE when glXChooseVisual(GLX_STEREO)
 
 /* Init functions */
 void *QuadBufferEmuFindFunction(const char *symbol);
@@ -33,38 +47,7 @@ void QuadBufferEmuExit(void);
 
 
 /* dlsym wrap */
-extern void *dlsym_test(void *lib, char *name);
-
-struct handleName {
-	void *handle;
-	const char *symbol;
-};
-
-#define NB_WRAP_FUNCTIONS 21
-
-struct handleName wrap[NB_WRAP_FUNCTIONS] = {
-	{ glClear, "glClear" },
-	{ glDrawBuffer, "glDrawBuffer" },
-	{ glDisable, "glDisable" },
-	{ glEnable, "glEnable" },
-	{ glGetBooleanv, "glGetBooleanv" },
-	{ glGetDoublev, "glGetDoublev" },
-	{ glGetFloatv, "glGetFloatv" },
-	{ glGetIntegerv, "glGetIntegerv" },
-	{ glScissor, "glScissor" },
-	{ glViewport, "glViewport" },
-	{ glXChooseFBConfig , "glXChooseFBConfig" },
-	{ glXChooseVisual, "glXChooseVisual" },
-	{ glXSwapBuffers, "glXSwapBuffers"},
-	{ glXGetConfig, "glXGetConfig" },
-	{ glXGetProcAddress, "glXGetProcAddress" },
-	{ glXGetProcAddressARB, "glXGetProcAddressARB" },
-	{ XCreateWindow, "XCreateWindow" },
-	{ XDestroyWindow, "XDestroyWindow" },
-	{ XNextEvent, "XNextEvent" },
-	{ XPeekEvent, "XPeekEvent" },
-	{ XWindowEvent, "XWindowEvent" }
-};
+extern void *dlsym_test(void *lib, const char *name);
 
 
 /* link to transform functions */
@@ -111,3 +94,5 @@ int (*real_XDestroyWindow) (Display *display, Window w);
 int (*real_XNextEvent) (Display *display, XEvent *event_return);
 int (*real_XPeekEvent) (Display *display, XEvent *event_return);
 int (*real_XWindowEvent) (Display *display, Window w, long event_mask, XEvent *event_return);
+
+#endif /* H__GLQUADBUFFEREMU */

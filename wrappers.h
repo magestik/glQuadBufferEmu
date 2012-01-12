@@ -1,17 +1,15 @@
+#ifndef H__WRAPPERS
+#define H__WRAPPERS
+
+#include "glQuadBufferEmu.h"
+
 #include <GL/glx.h>
 #include <GL/gl.h>
 #include <GL/glu.h>
 
-/* Constants */
-#define NONE			0
-#define MONOSCOPIC		1
-#define ANAGLYPH		2
-#define SIDEBYSIDE		3
-#define INTERLACED		4
-
 /* User var */
-extern GLint MODE;
-extern GLboolean DEBUG;
+extern STEREO_MODE MODE;
+/* extern GLboolean DEBUG; <= should be a preprocessor variable */
 
 /* Global var */
 extern unsigned int QuadBufferHeight;
@@ -67,3 +65,5 @@ extern int (*real_XDestroyWindow) (Display *display, Window w);
 extern int (*real_XNextEvent) (Display *display, XEvent *event_return);
 extern int (*real_XPeekEvent) (Display *display, XEvent *event_return);
 extern int (*real_XWindowEvent) (Display *display, Window w, long event_mask, XEvent *event_return);
+
+#endif /* H__WRAPPERS */
