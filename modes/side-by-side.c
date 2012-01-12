@@ -19,13 +19,13 @@ void initSideBySideMode(void){
 void setCorrectViewport(void) {
 
 	/* Top/Bottom */
-	//setTopBottomViewport();
+	setTopBottomViewport();
 	
 	/* Left/Right */
 	//setLeftRightViewport();
 	
 	/* frame-packing */
-	setFramePackedViewport();
+	//setFramePackedViewport();
 }
 
 void setTopBottomViewport(void) {
@@ -89,6 +89,8 @@ void sideBySide_glDrawBuffer(GLenum mode) {
 		
 	} else { // GL_FRONT, GL_BACK, GL_FRONT_AND_BACK
 		fprintf(stderr, "WARNING: writing in (GL_FRONT, GL_BACK or GL_FRONT_AND_BACK) not yet supported in side-by-side\n");
+		real_glViewport(leftViewport[0], leftViewport[1], QuadBufferWidth/ratio[0], QuadBufferHeight/ratio[1]);
+		real_glScissor(leftViewport[0], leftViewport[1], QuadBufferWidth/ratio[0], QuadBufferHeight/ratio[1]);
 	}
 	
 	if( !glIsEnabled(GL_SCISSOR_TEST) ) glEnable(GL_SCISSOR_TEST);
@@ -101,21 +103,33 @@ void sideBySide_glGetIntegerv(GLenum pname, GLint * params) {
 		if (QuadBufferCurrent == GL_BACK_RIGHT || QuadBufferCurrent == GL_FRONT_RIGHT || QuadBufferCurrent == GL_RIGHT) {
 			params[0] -= rightViewport[0];
 			params[1] -= rightViewport[1];
+			params[2] *= ratio[0];
+			params[3] *= ratio[1];
 		}
 	}
 }
 
-void sideBySide_glViewport(GLint x, GLint y, GLsizei width, GLsizei height) {
-	if (QuadBufferCurrent == GL_BACK_LEFT || QuadBufferCurrent == GL_FRONT_LEFT || QuadBufferCurrent == GL_LEFT) {
-		if(DEBUG) fprintf(stderr, "left Viewport(%d, %d, %d, %d)\n", leftViewport[0]+x, leftViewport[1]+y, width/ratio[0], height/ratio[1]);
-		real_glViewport(leftViewport[0]+x, leftViewport[1]+y, width/ratio[0], height/ratio[1]);
-		
-	} else if (QuadBufferCurrent == GL_BACK_RIGHT || QuadBufferCurrent == GL_FRONT_RIGHT || QuadBufferCurrent == GL_RIGHT) {
-		if(DEBUG) fprintf(stderr, "right Viewport(%d, %d, %d, %d)\n", rightViewport[0]+x, rightViewport[1]+y, width/ratio[0], height/ratio[1]);
-		real_glViewport(rightViewport[0]+x, rightViewport[1]+y, width/ratio[0], height/ratio[1]);
+void sideBySide_glScissor(GLint x, GLint y, GLsizei width, GLsizei height) {
+	if(DEBUG) fprintf(stderr, "glScissor(%d, %d, %d, %d)\n", x, y, width, height);
 	
+	if (QuadBufferCurrent == GL_BACK_LEFT || QuadBufferCurrent == GL_FRONT_LEFT || QuadBufferCurrent == GL_LEFT) {
+		real_glScissor(leftViewport[0]+x, leftViewport[1]+y, width/ratio[0], height/ratio[1]);
+	} else if (QuadBufferCurrent == GL_BACK_RIGHT || QuadBufferCurrent == GL_FRONT_RIGHT || QuadBufferCurrent == GL_RIGHT) {
+		real_glScissor(rightViewport[0]+x, rightViewport[1]+y, width/ratio[0], height/ratio[1]);
 	} else {
-		fprintf(stderr, "WARNING: setting Viewport(%d, %d, %d, %d) in (GL_FRONT, GL_BACK or GL_FRONT_AND_BACK) !\n", x, y, width, height);
+		real_glScissor(leftViewport[0]+x, leftViewport[1]+y, width/ratio[0], height/ratio[1]);
+	}
+}
+
+void sideBySide_glViewport(GLint x, GLint y, GLsizei width, GLsizei height) {
+	if(DEBUG) fprintf(stderr, "glViewport(%d, %d, %d, %d)\n", x, y, width, height);
+	
+	if (QuadBufferCurrent == GL_BACK_LEFT || QuadBufferCurrent == GL_FRONT_LEFT || QuadBufferCurrent == GL_LEFT) {
+		real_glViewport(leftViewport[0]+x, leftViewport[1]+y, width/ratio[0], height/ratio[1]);
+	} else if (QuadBufferCurrent == GL_BACK_RIGHT || QuadBufferCurrent == GL_FRONT_RIGHT || QuadBufferCurrent == GL_RIGHT) {
+		real_glViewport(rightViewport[0]+x, rightViewport[1]+y, width/ratio[0], height/ratio[1]);
+	} else {
+		real_glViewport(leftViewport[0]+x, leftViewport[1]+y, width/ratio[0], height/ratio[1]);
 	}
 }
 

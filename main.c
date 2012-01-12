@@ -71,7 +71,7 @@ void QuadBufferEmuLoadLibs(void) {
 
 void QuadBufferEmuLoadConf(void) { // FIXME : parse ~/.stereoscopic.conf
 	DEBUG = GL_FALSE;
-	MODE = FRAMESEQUENTIAL;
+	MODE = SIDEBYSIDE;
 }
 
 void QuadBufferEmuLoadMode(GLint m) {

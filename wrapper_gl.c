@@ -93,7 +93,7 @@ void glDrawBuffer(GLenum mode) { // http://www.opengl.org/sdk/docs/man/xhtml/glD
 /* http://www.opengl.org/sdk/docs/man/xhtml/glEnable.xml */
 
 void glDisable(GLenum cap) {
-	if(DEBUG) fprintf(stderr, "glDisable(.)\n");
+	//if(DEBUG) fprintf(stderr, "glDisable(.)\n");
 
 	if(wrap_glDisable == NULL || QuadBufferEnabled == GL_FALSE) {
 		real_glDisable(cap);
@@ -103,7 +103,7 @@ void glDisable(GLenum cap) {
 }
 
 void glEnable(GLenum cap) {
-	if(DEBUG) fprintf(stderr, "glEnable(.)\n");
+	//if(DEBUG) fprintf(stderr, "glEnable(.)\n");
 
 	if(wrap_glEnable == NULL || QuadBufferEnabled == GL_FALSE) {
 		real_glEnable(cap);
