@@ -40,7 +40,9 @@ static int is_glx_extension_supported(const char *query) {
 }
 
 void frameSequential_glXSwapInterval(int i){
-	if(DEBUG) fprintf(stderr, "glXSwapInterval(%d)\n", i);
+	#ifdef DEBUG
+		fprintf(stderr, "glXSwapInterval(%d)\n", i);
+	#endif
 	
 	void (*swapInterval)(int);
 	

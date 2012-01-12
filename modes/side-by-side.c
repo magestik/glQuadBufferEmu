@@ -110,7 +110,9 @@ void sideBySide_glGetIntegerv(GLenum pname, GLint * params) {
 }
 
 void sideBySide_glScissor(GLint x, GLint y, GLsizei width, GLsizei height) {
-	if(DEBUG) fprintf(stderr, "glScissor(%d, %d, %d, %d)\n", x, y, width, height);
+	#ifdef DEBUG
+		fprintf(stderr, "glScissor(%d, %d, %d, %d)\n", x, y, width, height);
+	#endif
 	
 	if (QuadBufferCurrent == GL_BACK_LEFT || QuadBufferCurrent == GL_FRONT_LEFT || QuadBufferCurrent == GL_LEFT) {
 		real_glScissor(leftViewport[0]+x, leftViewport[1]+y, width/ratio[0], height/ratio[1]);
@@ -122,7 +124,9 @@ void sideBySide_glScissor(GLint x, GLint y, GLsizei width, GLsizei height) {
 }
 
 void sideBySide_glViewport(GLint x, GLint y, GLsizei width, GLsizei height) {
-	if(DEBUG) fprintf(stderr, "glViewport(%d, %d, %d, %d)\n", x, y, width, height);
+	#ifdef DEBUG
+		fprintf(stderr, "glViewport(%d, %d, %d, %d)\n", x, y, width, height);
+	#endif
 	
 	if (QuadBufferCurrent == GL_BACK_LEFT || QuadBufferCurrent == GL_FRONT_LEFT || QuadBufferCurrent == GL_LEFT) {
 		real_glViewport(leftViewport[0]+x, leftViewport[1]+y, width/ratio[0], height/ratio[1]);
