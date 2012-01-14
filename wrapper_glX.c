@@ -95,17 +95,17 @@ XVisualInfo *glXChooseVisual(Display *dpy, int screen, int *attribList){
     return ret;
 }
 
-int glXGetConfig(Display *dpy, XVisualInfo *vis, int attrib, int *value)
-{
+int glXGetConfig(Display *dpy, XVisualInfo *vis, int attrib, int *value) {
+    #ifdef DEBUG
+        fprintf(stderr, "glXGetConfig(.)\n");
+    #endif
+    
     int ret;
 
-    if(attrib == GLX_STEREO)
-    {
+    if(attrib == GLX_STEREO) {
         *value = True;
         ret = 0;
-    }
-    else
-    {
+    } else {
         ret = real_glXGetConfig(dpy, vis, attrib, value);
     }
 
@@ -113,8 +113,12 @@ int glXGetConfig(Display *dpy, XVisualInfo *vis, int attrib, int *value)
 }
 
 int glXGetFBConfigAttrib(Display *dpy, GLXFBConfig config, int attribute, int *value) {
+    #ifdef DEBUG
+        fprintf(stderr, "glXGetFBConfigAttrib(.)\n");
+    #endif
+    
     int ret;
-
+    
     if(attribute == GLX_STEREO){
         if(QuadBufferEnabled == GL_TRUE) {
             *value = True;
@@ -135,7 +139,6 @@ void (*glXGetProcAddress(const GLubyte *procname)) (void) {
     #endif
 
     void *r = QuadBufferEmuFindFunction((const char *)procname);
-
     return (r != NULL)? r : real_glXGetProcAddress(procname);
 }
 
@@ -145,7 +148,6 @@ void (*glXGetProcAddressARB(const GLubyte *procname))( void ) {
     #endif
 
     void *r = QuadBufferEmuFindFunction((const char *)procname);
-
     return (r != NULL)? r : real_glXGetProcAddressARB(procname);
 }
 
