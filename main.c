@@ -6,7 +6,6 @@
 #include "glQuadBufferEmu.h"
 #include "wrappers.h"
 
-
 /* The QuadBuffer emulator state */
 QuadBufferState QBState =
 {
@@ -19,7 +18,7 @@ QuadBufferState QBState =
     {0, 0},
     {0, RED, CYAN, NULL, NULL},
     {VERTICAL},
-    {{0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0}, SBS_SIDEBYSIDE},
+    {{0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0}, SBS_LEFTRIGHT},
     {0, NULL, NV3DVISION, NULL}
 };
 
@@ -47,31 +46,31 @@ void QuadBufferEmuLoadConf (void)
 
 void QuadBufferEmuLoadMode ()
 {
-    switch (QBState.mode)
-    {
-    case FRAMESEQUENTIAL:
-        initFrameSequentialMode();
+    switch (QBState.mode) {
+		
+		case FRAMESEQUENTIAL:
+			initFrameSequentialMode();
         break;
 
-    case INTERLACED:
-        initInterlacedMode();
+		case INTERLACED:
+			initInterlacedMode();
         break;
 
-    case SIDEBYSIDE:
-        initSideBySideMode();
+		case SIDEBYSIDE:
+			initSideBySideMode();
         break;
 
-    case ANAGLYPH:
-        initAnaglyphMode();
+		case ANAGLYPH:
+			initAnaglyphMode();
         break;
 
-    case MONOSCOPIC:
-        initMonoscopicMode();
+		case MONOSCOPIC:
+			initMonoscopicMode();
         break;
 
-    case NONE:
+		case NONE:
         default:
-        FATAL_ERROR ("Quad-Buffer Stereo Wrapper: Mode not supported !");
+			FATAL_ERROR ("Quad-Buffer Stereo Wrapper: Mode not supported !");
     }
 }
 

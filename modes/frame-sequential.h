@@ -6,8 +6,6 @@
 #include <GL/glu.h>
 #include <GL/glut.h>
 
-#include <GL/glxext.h>
-#include <GL/glext.h>
 
 typedef enum
 {
@@ -33,10 +31,11 @@ void initFrameSequentialMode(void);
 void wait_vblank(void);
 
 /* Transformation functions */
+/*
 int glXSwapIntervalSGI (int interval);
 int glXGetVideoSyncSGI (unsigned int *count);
 int glXWaitVideoSyncSGI (int divisor, int remainder, unsigned int *count);
-
+*/
 void frameSequential_glDrawBuffer(GLenum mode);
 void frameSequential_glXSwapBuffers(Display * dpy, GLXDrawable drawable);
 

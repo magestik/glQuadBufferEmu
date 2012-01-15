@@ -20,22 +20,22 @@ void initSideBySideMode (void)
 
 void setCorrectViewport (void)
 {
-    switch (QBState.sidebyside.mode)
-    {
-    case SBS_SIDEBYSIDE:
-        setLeftRightViewport();
+    switch (QBState.sidebyside.mode) {
+		
+		case SBS_LEFTRIGHT:
+			setLeftRightViewport();
         break;
 
-    case SBS_TOPBOTTOM:
-        setTopBottomViewport ();
+		case SBS_TOPBOTTOM:
+			setTopBottomViewport ();
         break;
 
-    case SBS_FRAMEPACKED:
-        setFramePackedViewport();
+		case SBS_FRAMEPACKED:
+			setFramePackedViewport();
         break;
 
-    default:
-        FATAL_ERROR ("Side by side mode not supported");
+		default:
+			FATAL_ERROR ("Side by side mode not supported");
     }
 }
 
