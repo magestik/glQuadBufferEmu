@@ -11,19 +11,17 @@ The users will have to install this OpenGL wrapper if they don't have a proffess
 * * COMPILATION * *
 
 Compile the wrapper:
-$ make all
+$ make
 
-Compile the demos:
-$ cd tests
-$ make all
-
+You can compile in debug mode:
+$ make debug
 
 * * USABILITY * *
 
 How to use it :
 $ LD_PRELOAD=/location/glQuadBufferEmu.so YourQuadBufferedApplication
 
-Example of use: 
+Example of use:
 $ LD_PRELOAD=./glQuadBufferEmu.so glxgears -stereo
 
 You may want to make the lib available from any directory :
@@ -38,7 +36,22 @@ $ LD_PRELOAD=glQuadBufferEmu.so glxgears -stereo
 Sorry, the wrapper is hardcoded for now !
 
 You can change the display mode in main.c. Search
-MODE = __________;
+
+/* The QuadBuffer emulator state */
+QuadBufferState QBState =
+{
+    0,
+    0,
+    GL_FALSE,
+    GL_FRONT,
+    GL_FALSE,
+    FRAMESEQUENTIAL, <= Hack here.
+    {0, 0},
+    {0, RED, CYAN, NULL, NULL},
+    {VERTICAL},
+    {{0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0}, SBS_SIDEBYSIDE},
+    {0, NULL, NV3DVISION, NULL}
+};
 
 And choose your display mode.
 

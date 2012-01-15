@@ -5,29 +5,43 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 
-#include "glQuadBufferEmu.h"
+#define WRAPPED_FUNCTIONS_GLX
+#define X(ret,func,args)\
+    ret func args;
 
-GLXFBConfig *glXChooseFBConfig(Display *dpy, int screen,const int *attrib_list, int *nelements);
-XVisualInfo *glXChooseVisual(Display *dpy, int screen, int *attribList);
-int glXGetConfig(Display *dpy, XVisualInfo *vis, int attrib, int *value);
-int glXGetFBConfigAttrib(Display *dpy, GLXFBConfig config, int attribute, int *value);
-void (*glXGetProcAddress(const GLubyte *procname)) (void);
-void (*glXGetProcAddressARB(const GLubyte *procname)) (void);
-void glXSwapBuffers(Display * dpy, GLXDrawable drawable);
+#include "wrapped_functions.def"
+
+
+#define WRAPPED_FUNCTIONS_GLX_GETPROC
+#define X(ret,func,args)\
+    ret (* func (const GLubyte *procname)) args;
+
+#include "wrapped_functions.def"
 
 
 /* Real Functions */
-GLXFBConfig* (*real_glXChooseFBConfig) (Display *dpy, int screen, const int * attrib_list, int * nelements);
-XVisualInfo* (*real_glXChooseVisual) (Display *dpy, int screen, int *attribList);
-void (*real_glXSwapBuffers) (Display * dpy, GLXDrawable drawable);
-int (*real_glXGetConfig) (Display *dpy, XVisualInfo *vis, int attrib, int *value);
-int (*real_glXGetFBConfigAttrib) (Display *dpy, GLXFBConfig config, int attribute, int *value);
-void (*(*real_glXGetProcAddress) (const GLubyte *procname))( void );
-void (*(*real_glXGetProcAddressARB)(const GLubyte *procName))( void );
+#define X(ret,func,args)\
+    ret (*real_ ## func) args;
+
+#include "wrapped_functions.def"
+
+#define WRAPPED_FUNCTIONS_GLX_GETPROC
+#define X(ret,func,args)\
+    ret (*(*real_ ## func )(const GLubyte* procname)) args;
+
+#include "wrapped_functions.def"
+
 
 /* Wrapped Functions */
-GLXFBConfig* (*wrap_glXChooseFBConfig) (Display *dpy,  int screen, const int * attrib_list,  int * nelements);
-XVisualInfo* (*wrap_glXChooseVisual) (Display *dpy, int screen, int *attribList);
-void (*wrap_glXSwapBuffers) (Display * dpy, GLXDrawable drawable);
+#define X(ret,func,args)\
+    ret (*wrap_ ## func) args;
+
+#include "wrapped_functions.def"
+
+/* Load and unload GLX wrapper */
+void QuadBufferEmuInitGLX (void);
+void QuadBufferEmuUnloadGLX (void);
+
+#undef WRAPPED_FUNCTIONS_GLX
 
 #endif /* H_WRAPPER_GLX */

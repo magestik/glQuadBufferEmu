@@ -1,31 +1,40 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "wrapper_gl.h"
+#include "wrappers.h"
+#include "glQuadBufferEmu.h"
 
 // Wrapper for GL - /usr/include/GL/gl.h
 
+void *libGL_handle = NULL;
+
 /* http://www.opengl.org/sdk/docs/man/xhtml/glClear.xml */
-void glClear(GLbitfield mask) {
+void glClear (GLbitfield mask)
+{
     #ifdef DEBUG
-        fprintf(stderr, "glClear(.)\n");
+        fprintf(stderr, "glClear(0x%4X)\n", mask);
     #endif
 
-    if(wrap_glClear == NULL || QuadBufferEnabled == GL_FALSE) {
+    if (wrap_glClear == NULL || QBState.enabled == GL_FALSE)
+    {
         real_glClear(mask);
-    } else {
+    }
+    else
+    {
         wrap_glClear(mask);
     }
 }
 
+
 /* http://www.opengl.org/sdk/docs/man/xhtml/glDrawBuffer.xml */
-void glDrawBuffer(GLenum mode) {
+void glDrawBuffer (GLenum mode)
+{
     const char *bname;
     GLboolean wrap = GL_TRUE;
-    QuadBufferCurrent = mode;
+    QBState.current = mode;
     (void) bname; /* to avoid boring "not used" warning */
 
-    switch(mode)
+    switch (mode)
     {
         // GL_ FRONT
         case GL_FRONT:
@@ -91,135 +100,202 @@ void glDrawBuffer(GLenum mode) {
     }
 
     #ifdef DEBUG
-        fprintf(stderr, "glDrawBuffer(%s)\n", bname);
+        fprintf (stderr, "glDrawBuffer(%s)\n", bname);
     #endif
 
     if (wrap_glDrawBuffer == NULL
-    ||  QuadBufferEnabled == GL_FALSE
+    ||  QBState.enabled == GL_FALSE
     ||  wrap == GL_FALSE)
     {
-        real_glDrawBuffer(mode);
+        real_glDrawBuffer (mode);
     }
     else
     {
-        wrap_glDrawBuffer(mode);
+        wrap_glDrawBuffer (mode);
     }
 }
-
 
 
 /* http://www.opengl.org/sdk/docs/man/xhtml/glEnable.xml */
-void glEnable(GLenum cap) {
+void glEnable (GLenum cap)
+{
     #ifdef DEBUG
-        fprintf(stderr, "glEnable(.)\n");
+        fprintf (stderr, "glEnable(%d)\n", cap);
     #endif
 
-    if(wrap_glEnable == NULL || QuadBufferEnabled == GL_FALSE) {
-        real_glEnable(cap);
-    } else {
-        wrap_glEnable(cap);
+    if (wrap_glEnable == NULL || QBState.enabled == GL_FALSE)
+    {
+        real_glEnable (cap);
+    }
+    else
+    {
+        wrap_glEnable (cap);
     }
 }
 
-void glDisable(GLenum cap) {
+
+void glDisable (GLenum cap)
+{
     #ifdef DEBUG
-        fprintf(stderr, "glDisable(.)\n");
+        fprintf (stderr, "glDisable(%d)\n", cap);
     #endif
 
-    if(wrap_glDisable == NULL || QuadBufferEnabled == GL_FALSE) {
-        real_glDisable(cap);
-    } else {
-        wrap_glDisable(cap);
+    if (wrap_glDisable == NULL || QBState.enabled == GL_FALSE)
+    {
+        real_glDisable (cap);
+    }
+    else
+    {
+        wrap_glDisable (cap);
     }
 }
 
 
 /* http://www.opengl.org/sdk/docs/man/xhtml/glGet.xml */
-
-void glGetBooleanv(GLenum pname, GLboolean * params) {
+void glGetBooleanv (GLenum pname, GLboolean *params)
+{
     #ifdef DEBUG
-        fprintf(stderr, "glGetBooleanv(.)\n");
+        fprintf (stderr, "glGetBooleanv(%d, %p)\n", pname, params);
     #endif
 
-    switch(pname) {
-        case GL_STEREO:
-            *params = GL_TRUE;
+    switch (pname)
+    {
+    case GL_STEREO:
+        *params = GL_TRUE;
         break;
 
-        default:
-            if(wrap_glGetBooleanv == NULL || QuadBufferEnabled == GL_FALSE) {
-                real_glGetBooleanv(pname, params);
-            } else {
-                wrap_glGetBooleanv(pname, params);
-            }
+    default:
+        if (wrap_glGetBooleanv == NULL || QBState.enabled == GL_FALSE)
+        {
+            real_glGetBooleanv (pname, params);
+        }
+        else
+        {
+            wrap_glGetBooleanv (pname, params);
+        }
     }
 }
 
-void glGetDoublev(GLenum pname, GLdouble * params) {
+
+void glGetDoublev (GLenum pname, GLdouble * params)
+{
     #ifdef DEBUG
-        fprintf(stderr, "glGetDoublev(.)\n");
+        fprintf (stderr, "glGetDoublev(%d, %p)\n", pname, params);
     #endif
 
-    if(wrap_glGetDoublev == NULL || QuadBufferEnabled == GL_FALSE) {
-        real_glGetDoublev(pname, params);
-    } else {
-        wrap_glGetDoublev(pname, params);
+    if (wrap_glGetDoublev == NULL || QBState.enabled == GL_FALSE)
+    {
+        real_glGetDoublev (pname, params);
+    }
+    else
+    {
+        wrap_glGetDoublev (pname, params);
     }
 }
 
-void glGetFloatv(GLenum pname, GLfloat * params) {
+
+void glGetFloatv (GLenum pname, GLfloat *params)
+{
     #ifdef DEBUG
-        fprintf(stderr, "glGetFloatv(.)\n");
+        fprintf (stderr, "glGetFloatv(%d, %p)\n", pname, params);
     #endif
 
-    if(wrap_glGetFloatv == NULL || QuadBufferEnabled == GL_FALSE) {
-        real_glGetFloatv(pname, params);
-    } else {
-        wrap_glGetFloatv(pname, params);
+    if (wrap_glGetFloatv == NULL || QBState.enabled == GL_FALSE)
+    {
+        real_glGetFloatv (pname, params);
+    }
+    else
+    {
+        wrap_glGetFloatv (pname, params);
     }
 }
 
-void glGetIntegerv(GLenum pname, GLint * params) {
+void glGetIntegerv (GLenum pname, GLint *params)
+{
     #ifdef DEBUG
-        fprintf(stderr, "glGetIntegerv(.)\n");
+        fprintf (stderr, "glGetIntegerv(%d, %p)\n", pname, params);
     #endif
 
-    switch(pname) {
-        case GL_DRAW_BUFFER:
-            *params = QuadBufferCurrent;
+    switch (pname)
+    {
+    case GL_DRAW_BUFFER:
+        *params = QBState.current;
         break;
 
-        default:
-            if(wrap_glGetIntegerv == NULL || QuadBufferEnabled == GL_FALSE) {
-                real_glGetIntegerv(pname, params);
-            } else {
-                wrap_glGetIntegerv(pname, params);
-            }
+    default:
+        if (wrap_glGetIntegerv == NULL || QBState.enabled == GL_FALSE)
+        {
+            real_glGetIntegerv (pname, params);
+        }
+        else
+        {
+            wrap_glGetIntegerv (pname, params);
+        }
     }
 }
 
 // http://www.opengl.org/sdk/docs/man/xhtml/glScissor.xml
-void glScissor(GLint x, GLint y, GLsizei width, GLsizei height) {
+void glScissor (GLint x, GLint y, GLsizei width, GLsizei height)
+{
     #ifdef DEBUG
-        fprintf(stderr, "glScissor(%d, %d, %d, %d)\n", x, y, width, height);
+        fprintf (stderr, "glScissor(%d, %d, %d, %d)\n", x, y, width, height);
     #endif
 
-    if(wrap_glScissor == NULL || QuadBufferEnabled == GL_FALSE) {
-        real_glScissor(x, y, width, height);
-    } else {
-        wrap_glScissor(x, y, width, height); // Side-By-Side
+    if (wrap_glScissor == NULL || QBState.enabled == GL_FALSE)
+    {
+        real_glScissor (x, y, width, height);
+    }
+    else
+    {
+        wrap_glScissor (x, y, width, height); // Side-By-Side
     }
 }
 
 // http://www.opengl.org/sdk/docs/man/xhtml/glViewport.xml
-void glViewport(GLint x, GLint y, GLsizei width, GLsizei height) {
+void glViewport (GLint x, GLint y, GLsizei width, GLsizei height)
+{
     #ifdef DEBUG
-        fprintf(stderr, "glViewport(%d, %d, %d, %d)\n", x, y, width, height);
+        fprintf (stderr, "glViewport(%d, %d, %d, %d)\n", x, y, width, height);
     #endif
 
-    if(wrap_glViewport == NULL || QuadBufferEnabled == GL_FALSE) {
-        real_glViewport(x, y, width, height);
-    } else {
-        wrap_glViewport(x, y, width, height); // Side-By-Side
+    if(wrap_glViewport == NULL || QBState.enabled == GL_FALSE)
+    {
+        real_glViewport (x, y, width, height);
+    }
+    else
+    {
+        wrap_glViewport (x, y, width, height); // Side-By-Side
     }
 }
+
+
+#define WRAPPED_FUNCTIONS_GL
+
+void QuadBufferEmuInitGL (void)
+{
+    libGL_handle = open_lib("libGL.so");
+
+    /* Init wrappers */
+    #define X(func,args)\
+        wrap_ ## func = NULL;
+
+    #include "wrapped_functions.def"
+
+    /* tell wrapper_dlsym to wrap GL functions */
+    #define X(func,args)\
+        dlsym_add_wrap (func, #func);
+
+    #include "wrapped_functions.def"
+
+    /* Link real functions */
+    #define X(func,args)\
+        real_ ## func = dlsym_test (libGL_handle, #func);
+
+    #include "wrapped_functions.def"
+}
+
+void QuadBufferEmuUnloadGL (void)
+{
+    dlclose (libGL_handle);
+}
+

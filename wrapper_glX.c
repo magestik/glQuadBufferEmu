@@ -5,6 +5,7 @@
 #include <sys/time.h>
 
 #include "wrappers.h"
+#include "glQuadBufferEmu.h"
 
 // Wrapper for glX - /usr/include/GL/glx.h
 
@@ -12,154 +13,236 @@ void calcFPS() {
     // TODO : calculer FPS
 }
 
-GLXFBConfig *glXChooseFBConfig(Display *dpy, int screen, const int *attrib_list, int *nelements) {
+
+GLXFBConfig *glXChooseFBConfig
+    (Display *dpy, int screen, const int *attrib_list, int *nelements)
+{
     int wrapped_attribList[60]; // 60 is enough ?
     int requested = 0;
     GLXFBConfig* ret = NULL;
 
     int i = 0;
 
-    while(attrib_list[i] != None) {
-
-        if(attrib_list[i] == GLX_STEREO) {
-
-            if(attrib_list[i+1] == True) {
+    while (attrib_list[i] != None)
+    {
+        if (attrib_list[i] == GLX_STEREO)
+        {
+            if (attrib_list[i+1] == True)
+            {
                 requested += 2;
-            } else if(attrib_list[i+1] != False) {
-                requested++;
-            } else { // attrib_list[i+1] == False
-                //QuadBufferEnabled = GL_FALSE;
             }
-
-        } else {
+            else if (attrib_list[i+1] != False)
+            {
+                requested++;
+            }
+            else
+            {
+                // attrib_list[i+1] == False
+                //QBState.enabled = GL_FALSE;
+            }
+        }
+        else
+        {
             wrapped_attribList[i-requested] = attrib_list[i];
         }
-
         i++;
     }
-
     wrapped_attribList[i-requested] = None;
 
-    if(requested > 0) {
-        QuadBufferEnabled = GL_TRUE;
-        fprintf(stderr, "glXChooseFBConfig(GLX_STEREO)\n");
-    } else {
-        //QuadBufferEnabled = GL_FALSE;
-        fprintf(stderr, "glXChooseFBConfig(.)\n");
+    if (requested > 0)
+    {
+        QBState.enabled = GL_TRUE;
+        fprintf (stderr, "glXChooseFBConfig(GLX_STEREO)\n");
+    }
+    else
+    {
+        //QBState.enabled = GL_FALSE;
+        fprintf (stderr, "glXChooseFBConfig(.)\n");
     }
 
-    if(wrap_glXChooseFBConfig == NULL || QuadBufferEnabled == GL_FALSE) {
-        ret = real_glXChooseFBConfig(dpy, screen, (const int *)wrapped_attribList, nelements);
-    } else {
-        ret = wrap_glXChooseFBConfig(dpy, screen, (const int *)wrapped_attribList, nelements);
+    if (wrap_glXChooseFBConfig == NULL || QBState.enabled == GL_FALSE)
+    {
+        ret = real_glXChooseFBConfig
+                (dpy, screen, (const int *)wrapped_attribList, nelements);
+    }
+    else
+    {
+        ret = wrap_glXChooseFBConfig
+                (dpy, screen, (const int *)wrapped_attribList, nelements);
     }
 
     return ret;
 }
 
-XVisualInfo *glXChooseVisual(Display *dpy, int screen, int *attribList){
-    int wrapped_attribList[60]; // 60 is enough ?
+XVisualInfo *glXChooseVisual (Display *dpy, int screen, int *attribList)
+{
+    int wrapped_attribList[60] = {None};
     int requested = 0;
     XVisualInfo* ret;
 
     int i = 0;
 
-    while(attribList[i] != None) {
-
-        if(attribList[i] == GLX_STEREO) {
+    while (attribList[i] != None)
+    {
+        if (attribList[i] == GLX_STEREO)
+        {
             requested++;
-        } else {
-            wrapped_attribList[i-requested] = attribList[i];
         }
-
+        else
+        {
+            wrapped_attribList[i - requested] = attribList[i];
+        }
         i++;
     }
 
-    wrapped_attribList[i-requested] = None;
-
-    if(requested > 0) {
-        QuadBufferEnabled = GL_TRUE;
-        fprintf(stderr, "glXChooseVisual(GLX_STEREO)\n");
-    } else {
-        //QuadBufferEnabled = GL_FALSE;
-        fprintf(stderr, "glXChooseVisual(.)\n");
+    if (requested > 0)
+    {
+        QBState.enabled = GL_TRUE;
+        fprintf (stderr, "glXChooseVisual(GLX_STEREO)\n");
+    }
+    else
+    {
+        /*QBState.enabled = GL_FALSE;*/
+        fprintf (stderr, "glXChooseVisual(.)\n");
     }
 
-
-    if(wrap_glXChooseVisual == NULL || QuadBufferEnabled == GL_FALSE) {
+    if (wrap_glXChooseVisual == NULL || QBState.enabled == GL_FALSE)
+    {
         ret = real_glXChooseVisual(dpy, screen, wrapped_attribList);
-    } else {
+    }
+    else
+    {
         ret = wrap_glXChooseVisual(dpy, screen, wrapped_attribList);
     }
+
+    #ifdef DEBUG
+    fprintf (stderr,
+            "glXChooseVisual (Display:%p, screen:%d, attribList %p)\n"
+            ">  returned: %p\n",dpy, screen, attribList, ret);
+    #endif
 
     return ret;
 }
 
-int glXGetConfig(Display *dpy, XVisualInfo *vis, int attrib, int *value) {
-    #ifdef DEBUG
-        fprintf(stderr, "glXGetConfig(.)\n");
-    #endif
-    
+int glXGetConfig(Display *dpy, XVisualInfo *vis, int attrib, int *value)
+{
     int ret;
 
-    if(attrib == GLX_STEREO) {
+    if(attrib == GLX_STEREO)
+    {
         *value = True;
         ret = 0;
-    } else {
+    }
+    else
+    {
         ret = real_glXGetConfig(dpy, vis, attrib, value);
     }
 
     return ret;
 }
 
-int glXGetFBConfigAttrib(Display *dpy, GLXFBConfig config, int attribute, int *value) {
-    #ifdef DEBUG
-        fprintf(stderr, "glXGetFBConfigAttrib(.)\n");
-    #endif
-    
+int glXGetFBConfigAttrib
+    (Display *dpy, GLXFBConfig config, int attribute, int *value)
+{
     int ret;
-    
-    if(attribute == GLX_STEREO){
-        if(QuadBufferEnabled == GL_TRUE) {
+
+    if(attribute == GLX_STEREO)
+    {
+        if(QBState.enabled == GL_TRUE)
+        {
             *value = True;
-        } else {
+        }
+        else
+        {
             *value = False;
         }
         ret = 0;
-    } else {
+    }
+    else
+    {
         ret = real_glXGetFBConfigAttrib(dpy, config, attribute, value);
     }
 
     return ret;
 }
 
-void (*glXGetProcAddress(const GLubyte *procname)) (void) {
+void (*glXGetProcAddress(const GLubyte *procname)) (void)
+{
     #ifdef DEBUG
         fprintf(stderr, "glXGetProcAddress(%s)\n", procname);
     #endif
 
-    void *r = QuadBufferEmuFindFunction((const char *)procname);
+    void *r = dlsym_find_function((const char *)procname);
+
     return (r != NULL)? r : real_glXGetProcAddress(procname);
 }
 
-void (*glXGetProcAddressARB(const GLubyte *procname))( void ) {
+void (*glXGetProcAddressARB(const GLubyte *procname)) (void)
+{
     #ifdef DEBUG
         fprintf(stderr, "glXGetProcAddressARB(%s)\n", procname);
     #endif
 
-    void *r = QuadBufferEmuFindFunction((const char *)procname);
+    void *r = dlsym_find_function((const char *)procname);
+
     return (r != NULL)? r : real_glXGetProcAddressARB(procname);
 }
 
-void glXSwapBuffers(Display * dpy, GLXDrawable drawable){
+void glXSwapBuffers(Display * dpy, GLXDrawable drawable)
+{
     #ifdef DEBUG
-        fprintf(stderr, "glXSwapBuffers(.)\n");
+        fprintf(stderr, "glXSwapBuffers(%p, %p)\n", dpy, &drawable);
         calcFPS();
     #endif
 
-    if(wrap_glXSwapBuffers == NULL || QuadBufferEnabled == GL_FALSE) {
+    if(wrap_glXSwapBuffers == NULL || QBState.enabled == GL_FALSE)
+    {
         real_glXSwapBuffers(dpy, drawable);
-    } else {
+    }
+    else
+    {
         wrap_glXSwapBuffers(dpy, drawable);
     }
 }
+
+
+#define WRAPPED_FUNCTIONS_GLX
+
+void QuadBufferEmuInitGLX (void)
+{
+    /* Init wrappers functions */
+    #define X(ret,func,args)\
+        wrap_ ## func = NULL;
+
+    #include "wrapped_functions.def"
+
+    /* tell wrapper_dlsym to wrap GLX functions */
+    #define X(ret,func,args)\
+        dlsym_add_wrap (func, #func);
+
+    #include "wrapped_functions.def"
+
+    #define X(ret,func,args)\
+        dlsym_add_wrap (func, #func);
+    #define WRAPPED_FUNCTIONS_GLX_GETPROC
+
+    #include "wrapped_functions.def"
+
+    /* Link real ones */
+    #define X(ret,func,args)\
+        real_ ## func = dlsym_test (libGL_handle, #func);
+
+    #include "wrapped_functions.def"
+
+    #define X(ret,func,args)\
+        real_ ## func = dlsym_test (libGL_handle, #func);
+    #define WRAPPED_FUNCTIONS_GLX_GETPROC
+
+    #include "wrapped_functions.def"
+}
+
+void QuadBufferEmuUnloadGLX (void)
+{
+    /* void */
+}
+

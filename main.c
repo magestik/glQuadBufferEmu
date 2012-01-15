@@ -4,165 +4,89 @@
 #include <string.h>
 
 #include "glQuadBufferEmu.h"
-
-#include "./modes/monoscopic.h"
-#include "./modes/anaglyph.h"
-#include "./modes/interlaced.h"
-#include "./modes/side-by-side.h"
-#include "./modes/frame-sequential.h"
+#include "wrappers.h"
 
 
-/* Global var */
-unsigned int QuadBufferHeight = 0;
-unsigned int QuadBufferWidth = 0;
-GLboolean QuadBufferFullscreen = GL_FALSE;
-
-GLenum QuadBufferCurrent = GL_FRONT; // The initial value is GL_FRONT for single-buffered contexts, and GL_BACK for double-buffered contexts.
-GLboolean QuadBufferEnabled = GL_FALSE; // GL_TRUE when glXChooseVisual(GLX_STEREO)
-
-void *libGL_handle;
-void *libX11_handle;
-
-struct handleName wrap[NB_WRAP_FUNCTIONS] = {
-    { glClear, "glClear" },
-    { glDrawBuffer, "glDrawBuffer" },
-    { glDisable, "glDisable" },
-    { glEnable, "glEnable" },
-    { glGetBooleanv, "glGetBooleanv" },
-    { glGetDoublev, "glGetDoublev" },
-    { glGetFloatv, "glGetFloatv" },
-    { glGetIntegerv, "glGetIntegerv" },
-    { glScissor, "glScissor" },
-    { glViewport, "glViewport" },
-    { glXChooseFBConfig , "glXChooseFBConfig" },
-    { glXChooseVisual, "glXChooseVisual" },
-    { glXSwapBuffers, "glXSwapBuffers"},
-    { glXGetConfig, "glXGetConfig" },
-    { glXGetProcAddress, "glXGetProcAddress" },
-    { glXGetProcAddressARB, "glXGetProcAddressARB" },
-    { XCreateWindow, "XCreateWindow" },
-    { XDestroyWindow, "XDestroyWindow" },
-    { XNextEvent, "XNextEvent" },
-    { XPeekEvent, "XPeekEvent" },
-    { XWindowEvent, "XWindowEvent" }
+/* The QuadBuffer emulator state */
+QuadBufferState QBState =
+{
+    0,
+    0,
+    GL_FALSE,
+    GL_FRONT,
+    GL_FALSE,
+    FRAMESEQUENTIAL,  // FRAMESEQUENTIAL,
+    {0, 0},
+    {0, RED, CYAN, NULL, NULL},
+    {VERTICAL},
+    {{0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0}, SBS_SIDEBYSIDE},
+    {0, NULL, NV3DVISION, NULL}
 };
 
 
-
-
-/* Returning our wrap function to dlsym or glXGetProcAdress*/
-void *QuadBufferEmuFindFunction(const char *symbol){
-    int i = 0;
-    void* ret = NULL;
-
-    while( i < NB_WRAP_FUNCTIONS && ret == NULL) {
-        if( !strcmp(wrap[i].symbol, symbol) ) {
-            ret = wrap[i].handle;
-        }
-
-        i++;
-    }
-
-    return ret;
+/* Loading and unload all function we want to wrap */
+void QuadBufferEmuLoadLibs (void)
+{
+    QuadBufferEmuInitGL ();
+    QuadBufferEmuInitGLX ();
+    QuadBufferEmuInitX11 ();
 }
 
-/* Loading all function we want to wrap */
-void QuadBufferEmuLoadLibs(void) {
-
-    libGL_handle = dlopen("libGL.so", RTLD_LAZY);
-    if (libGL_handle == NULL) {
-        fputs(dlerror(), stderr);
-        exit(EXIT_FAILURE);
-    }
-
-    libX11_handle = dlopen("libX11.so", RTLD_LAZY);
-    if (libX11_handle == NULL) {
-        fputs(dlerror(), stderr);
-        exit(EXIT_FAILURE);
-    }
-
-    real_glClear = dlsym_test(libGL_handle, "glClear");
-    real_glDrawBuffer = dlsym_test(libGL_handle, "glDrawBuffer");
-    real_glDisable = dlsym_test(libGL_handle, "glDisable");
-    real_glEnable = dlsym_test(libGL_handle, "glEnable");
-    real_glGetBooleanv = dlsym_test(libGL_handle, "glGetBooleanv");
-    real_glGetDoublev = dlsym_test(libGL_handle, "glGetDoublev");
-    real_glGetFloatv = dlsym_test(libGL_handle, "glGetFloatv");
-    real_glGetIntegerv = dlsym_test(libGL_handle, "glGetIntegerv");
-    real_glScissor = dlsym_test(libGL_handle, "glScissor");
-    real_glViewport = dlsym_test(libGL_handle, "glViewport");
-
-    real_glXChooseFBConfig = dlsym_test(libGL_handle, "glXChooseFBConfig");
-    real_glXChooseVisual = dlsym_test(libGL_handle, "glXChooseVisual");
-    real_glXSwapBuffers = dlsym_test(libGL_handle, "glXSwapBuffers");
-    real_glXGetConfig = dlsym_test(libGL_handle, "glXGetConfig");
-    real_glXGetFBConfigAttrib = dlsym_test(libGL_handle, "glXGetFBConfigAttrib");
-    real_glXGetProcAddress = dlsym_test(libGL_handle, "glXGetProcAddress");
-    real_glXGetProcAddressARB = dlsym_test(libGL_handle, "glXGetProcAddressARB");
-
-    real_XCreateWindow = dlsym_test(libX11_handle, "XCreateWindow");
-    real_XDestroyWindow = dlsym_test(libX11_handle, "XDestroyWindow");
-    real_XNextEvent = dlsym_test(libX11_handle, "XNextEvent");
-    real_XPeekEvent = dlsym_test(libX11_handle, "XPeekEvent");
-    real_XWindowEvent = dlsym_test(libX11_handle, "XWindowEvent");
+void QuadBufferEmuUnloadLibs (void)
+{
+    QuadBufferEmuUnloadGL ();
+    QuadBufferEmuUnloadGLX ();
+    QuadBufferEmuUnloadX11 ();
 }
 
-void QuadBufferEmuLoadConf(void) { // FIXME : parse ~/.stereoscopic.conf
-    MODE = FRAMESEQUENTIAL;
+/* TODO : parse ~/.config/glQuadBufferEmu/.glQuadBufferEmu.conf */
+void QuadBufferEmuLoadConf (void)
+{
+    /* set QBState */
 }
 
-void QuadBufferEmuLoadMode(GLint m) {
-    wrap_glClear = NULL;
-    wrap_glDrawBuffer = NULL;
-    wrap_glDisable = NULL;
-    wrap_glEnable = NULL;
-    wrap_glGetBooleanv = NULL;
-    wrap_glGetDoublev = NULL;
-    wrap_glGetFloatv = NULL;
-    wrap_glGetIntegerv = NULL;
-    wrap_glScissor = NULL;
-    wrap_glViewport = NULL;
-
-    wrap_glXChooseFBConfig = NULL;
-    wrap_glXChooseVisual = NULL;
-    wrap_glXSwapBuffers = NULL;
-
-    switch(m) {
-        case FRAMESEQUENTIAL:
-            initFrameSequentialMode();
+void QuadBufferEmuLoadMode ()
+{
+    switch (QBState.mode)
+    {
+    case FRAMESEQUENTIAL:
+        initFrameSequentialMode();
         break;
 
-        case INTERLACED:
-            initInterlacedMode();
+    case INTERLACED:
+        initInterlacedMode();
         break;
 
-        case SIDEBYSIDE:
-            initSideBySideMode();
+    case SIDEBYSIDE:
+        initSideBySideMode();
         break;
 
-        case ANAGLYPH:
-            initAnaglyphMode();
+    case ANAGLYPH:
+        initAnaglyphMode();
         break;
 
-        case MONOSCOPIC:
-            initMonoscopicMode();
+    case MONOSCOPIC:
+        initMonoscopicMode();
         break;
 
-        case NONE:
+    case NONE:
         default:
-            fprintf(stderr, "Quad-Buffer Stereo Wrapper: Mode not supported !\n");
-            exit(1);
+        FATAL_ERROR ("Quad-Buffer Stereo Wrapper: Mode not supported !");
     }
 }
 
-void QuadBufferEmuInit(void) {
-    printf("Quad-Buffer Stereo Wrapper: LOAD\n");
-
+void QuadBufferEmuInit(void)
+{
     QuadBufferEmuLoadConf();
     QuadBufferEmuLoadLibs();
-    QuadBufferEmuLoadMode(MODE);
+    QuadBufferEmuLoadMode();
+    atexit (QuadBufferEmuExit);
 }
 
-void QuadBufferEmuExit(void) {
-    printf("Quad-Buffer Stereo Wrapper: UNLOAD\n");
+void QuadBufferEmuExit(void)
+{
+    #ifdef DEBUG
+        fprintf (stderr, "Exiting ...\n");
+    #endif
+    QuadBufferEmuUnloadLibs ();
 }

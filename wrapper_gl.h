@@ -5,41 +5,31 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 
-#include "glQuadBufferEmu.h"
+extern void *libGL_handle;
 
-void glClear(GLbitfield mask);
-void glDrawBuffer(GLenum mode);
-void glDisable(GLenum cap);
-void glEnable(GLenum cap);
-void glGetBooleanv(GLenum pname, GLboolean * params);
-void glGetDoublev(GLenum pname, GLdouble * params);
-void glGetFloatv(GLenum pname, GLfloat * params);
-void glGetIntegerv(GLenum pname, GLint * params);
-void glScissor(GLint x, GLint y, GLsizei width, GLsizei height);
-void glViewport(GLint x, GLint y, GLsizei width, GLsizei height);
+#define WRAPPED_FUNCTIONS_GL
+
+#define X(func,args)\
+    void func args;
+
+#include "wrapped_functions.def"
 
 /* Real functions */
-void (*real_glClear) (GLbitfield  mask);
-void (*real_glDrawBuffer) (GLenum mode);
-void (*real_glDisable) (GLenum cap);
-void (*real_glEnable) (GLenum cap);
-void (*real_glGetBooleanv) (GLenum pname, GLboolean * params);
-void (*real_glGetDoublev) (GLenum pname, GLdouble * params);
-void (*real_glGetFloatv) (GLenum pname, GLfloat * params);
-void (*real_glGetIntegerv) (GLenum pname, GLint * params);
-void (*real_glScissor) (GLint x, GLint  y, GLsizei  width, GLsizei height);
-void (*real_glViewport) (GLint x, GLint y, GLsizei width, GLsizei height);
+#define X(func,args)\
+    void (*real_ ## func) args;
+
+#include "wrapped_functions.def"
 
 /* link to transform functions */
-void (*wrap_glClear) (GLbitfield  mask);
-void (*wrap_glDrawBuffer) (GLenum mode);
-void (*wrap_glDisable) (GLenum  cap);
-void (*wrap_glEnable) (GLenum  cap);
-void (*wrap_glGetBooleanv) (GLenum pname, GLboolean * params);
-void (*wrap_glGetDoublev) (GLenum pname, GLdouble * params);
-void (*wrap_glGetFloatv) (GLenum pname, GLfloat * params);
-void (*wrap_glGetIntegerv) (GLenum pname, GLint * params);
-void (*wrap_glScissor) (GLint x, GLint  y, GLsizei  width, GLsizei height);
-void (*wrap_glViewport) (GLint x, GLint y, GLsizei width, GLsizei height);
+#define X(func,args)\
+    void (*wrap_ ## func) args;
+
+#include "wrapped_functions.def"
+
+#undef WRAPPED_FUNCTIONS_GL
+
+/* Load and unload GL wrapper */
+void QuadBufferEmuInitGL (void);
+void QuadBufferEmuUnloadGL (void);
 
 #endif /* H__WRAPPER_GL */

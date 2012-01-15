@@ -1,3 +1,6 @@
+#ifndef H__FRAMESEQUENTIAL
+#define H__FRAMESEQUENTIAL
+
 #include <GL/glx.h>
 #include <GL/gl.h>
 #include <GL/glu.h>
@@ -6,21 +9,35 @@
 #include <GL/glxext.h>
 #include <GL/glext.h>
 
-extern int glXSwapIntervalSGI (int interval);
-extern int glXGetVideoSyncSGI (unsigned int *count);
-extern int glXWaitVideoSyncSGI (int divisor, int remainder, unsigned int *count);
+typedef enum
+{
+    NO_GLASSES,
+    NV3DVISION
+} FRAMESEQUENTIAL_GLASSES;
 
-#define NV_NONE 0
-#define NV_3D_VISION 1
+typedef struct frameSequentialState
+{
+    GLenum buffer;
+    void (*swapMethod)(int);
 
-int glasses;
-GLenum frameSequentialBuffer;
+    /* the user have shutter glasses or not */
+    FRAMESEQUENTIAL_GLASSES glasses;
+
+    /* nvstusb context to use with NVIDIA 3D Vision */
+    struct nvstusb_context *ctx;
+
+} FRAMESEQUENTIAL_STATE;
+
 
 void initFrameSequentialMode(void);
 void wait_vblank(void);
 
 /* Transformation functions */
+int glXSwapIntervalSGI (int interval);
+int glXGetVideoSyncSGI (unsigned int *count);
+int glXWaitVideoSyncSGI (int divisor, int remainder, unsigned int *count);
+
 void frameSequential_glDrawBuffer(GLenum mode);
 void frameSequential_glXSwapBuffers(Display * dpy, GLXDrawable drawable);
 
-
+#endif /* H__FRAMESEQUENTIAL */
