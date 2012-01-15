@@ -1,0 +1,54 @@
+/* wrapped_functions.def
+ * item list of all function we want to wrap */
+
+/* GL Wrapped function
+ * define ( func, args ) */
+#ifdef WRAPPED_FUNCTIONS_GL
+
+X( glClear,          (GLbitfield mask) )
+X( glDrawBuffer,     (GLenum mode) )
+X( glDisable,        (GLenum cap) )
+X( glEnable,         (GLenum cap) )
+X( glGetBooleanv,    (GLenum pname, GLboolean * params) )
+X( glGetDoublev,     (GLenum pname, GLdouble * params) )
+X( glGetFloatv,      (GLenum pname, GLfloat * params) )
+X( glGetIntegerv,    (GLenum pname, GLint * params) )
+X( glScissor,        (GLint x, GLint y, GLsizei width, GLsizei height) )
+X( glViewport,       (GLint x, GLint y, GLsizei width, GLsizei height) )
+
+#endif /* WRAPPED_FUNCTIONS_GL */
+
+/* GLX Wrapped functions
+ * define ( ret, func, args ) */
+#ifdef WRAPPED_FUNCTIONS_GLX
+#ifndef WRAPPED_FUNCTIONS_GLX_GETPROC
+
+X( GLXFBConfig*,  glXChooseFBConfig,     (Display *dpy, int screen,const int *attrib_list, int *nelements) )
+X( XVisualInfo*,  glXChooseVisual,       (Display *dpy, int screen, int *attribList) )
+X( int,           glXGetConfig,          (Display *dpy, XVisualInfo *vis, int attrib, int *value) )
+X( int,           glXGetFBConfigAttrib,  (Display *dpy, GLXFBConfig config, int attribute, int *value) )
+X( void,          glXSwapBuffers,        (Display *dpy, GLXDrawable drawable) )
+
+#else
+
+X( void,          glXGetProcAddress,     (void) )
+X( void,          glXGetProcAddressARB,  (void) )
+
+#undef WRAPPED_FUNCTIONS_GLX_GETPROC
+#endif /* WRAPPED_FUNCTIONS_GLX_GETPROC */
+
+#endif /* WRAPPED_FUNCTIONS_GLX */
+
+/* X11 Wrapped functions
+ * define ( ret, func, args ) */
+#ifdef WRAPPED_FUNCTIONS_X11
+
+X( Window, XCreateWindow,   (Display *display, Window parent, int x, int y, unsigned int width, unsigned int height, unsigned int border_width, int depth, unsigned int class, Visual *visual, unsigned long valuemask, XSetWindowAttributes *attributes) )
+X( int,    XDestroyWindow,  (Display *display, Window w) )
+X( int,    XNextEvent,      (Display *display, XEvent *event_return) )
+X( int,    XPeekEvent,      (Display *display, XEvent *event_return) )
+X( int,    XWindowEvent,    (Display *display, Window w, long event_mask, XEvent *event_return) )
+
+#endif /* WRAPPED_FUNCTIONS_X11 */
+
+#undef X
