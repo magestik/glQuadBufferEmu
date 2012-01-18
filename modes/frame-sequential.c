@@ -6,7 +6,7 @@
 #include "../wrappers.h"
 #include "frame-sequential.h"
 
-void (*swapInterval)(int);
+void (*swapInterval) (int);
 
 int (*glXGetVideoSyncSGI) (unsigned int *count);
 int (*glXWaitVideoSyncSGI) (int divisor, int remainder, unsigned int *count);
@@ -20,6 +20,7 @@ int (*glXWaitVideoSyncSGI) (int divisor, int remainder, unsigned int *count);
 00229         glXWaitForMscOML = (void *)glXGetProcAddress((unsigned char *)"glXWaitForMscOML");
 00230         glXWaitForSbcOML = (void *)glXGetProcAddress((unsigned char *)"glXWaitForSbcOML");
 */
+
 
 static int is_glx_extension_supported (const char *query)
 {
@@ -41,58 +42,76 @@ static int is_glx_extension_supported (const char *query)
             ret = 0;
     }
 
+    #ifdef DEBUG
+    if (ret == 1)
+        fprintf (stderr, "is_glx_extension_supported (%s)\n"
+                         "> extension is supported\n", query);
+    else
+        fprintf (stderr, "is_glx_extension_supported (%s)\n"
+                         "[WW] extension is not supported\n", query);
+    #endif
+
     return ret;
 }
 
 
 void frameSequential_glXSwapInterval (int i)
 {
+    HERE;
     #ifdef DEBUG
         fprintf (stderr, "glXSwapInterval(1)\n");
     #endif
 
     if (is_glx_extension_supported ("GLX_MESA_swap_control"))
     {
-        QBState.framesequential.swapMethod =
-            (void (*)(int)) real_glXGetProcAddress
+        swapInterval = (void (*)(int)) real_glXGetProcAddress
                                 ((const GLubyte*) "glXSwapIntervalMESA");
     }
     else if (is_glx_extension_supported ("GLX_SGI_swap_control"))
     {
-        QBState.framesequential.swapMethod =
-            (void (*)(int)) real_glXGetProcAddress
+        swapInterval = (void (*)(int)) real_glXGetProcAddress
                                 ((const GLubyte*) "glXSwapIntervalSGI");
     }
     else
     {
         WARNING ("No sync method !!!");
     }
-    
-    QBState.framesequential.swapMethod (i);
+
+    swapInterval (i);
 }
 
-void initFrameSequentialMode(void)
+void initFrameSequentialMode (void)
 {
     QBState.framesequential.buffer = GL_LEFT;
 
-    if (getenv ("__GL_SYNC_TO_VBLANK")) {
-            fprintf (stderr, "__GL_SYNC_TO_VBLANK defined\n");
-    } else {
-		glXWaitVideoSyncSGI = NULL;
-		glXGetVideoSyncSGI = NULL;
-		
-		if (real_glXGetProcAddressARB) {
-			glXWaitVideoSyncSGI = (void *) real_glXGetProcAddressARB((unsigned char *)"glXWaitVideoSyncSGI");
-			glXGetVideoSyncSGI = (void *) real_glXGetProcAddressARB((unsigned char *)"glXGetVideoSyncSGI");
+    if (getenv ("__GL_SYNC_TO_VBLANK"))
+    {
+        fprintf (stderr, "__GL_SYNC_TO_VBLANK defined\n");
+    }
+    else
+    {
+        glXWaitVideoSyncSGI = NULL;
+        glXGetVideoSyncSGI = NULL;
+
+        if (real_glXGetProcAddressARB)
+        {
+            glXWaitVideoSyncSGI =
+                (void *) real_glXGetProcAddressARB
+                                ((unsigned char *)"glXWaitVideoSyncSGI");
+            glXGetVideoSyncSGI =
+                (void *) real_glXGetProcAddressARB
+                                ((unsigned char *)"glXGetVideoSyncSGI");
         }
 
-        if (glXWaitVideoSyncSGI != NULL && glXGetVideoSyncSGI != NULL ) {
+        if (glXWaitVideoSyncSGI != NULL && glXGetVideoSyncSGI != NULL )
+        {
             fprintf (stderr, "glXWaitVideoSyncSGI && glXGetVideoSyncSGI\n");
-        } else {
+        }
+        else
+        {
             frameSequential_glXSwapInterval(1);
         }
     }
-
     wrap_glDrawBuffer = frameSequential_glDrawBuffer;
     wrap_glXSwapBuffers = frameSequential_glXSwapBuffers;
 }
@@ -135,18 +154,23 @@ void frameSequential_glDrawBuffer (GLenum mode)
 void frameSequential_glXSwapBuffers (Display * dpy, GLXDrawable drawable)
 {
 
-	unsigned int counter;
-	if (glXWaitVideoSyncSGI != NULL && glXGetVideoSyncSGI != NULL ) {
-		glXGetVideoSyncSGI(&counter);
-		glXWaitVideoSyncSGI(2, (counter+1)%2, &counter);
-	}
-      
-	
-    if (QBState.framesequential.buffer == GL_LEFT) {
+    static unsigned int counter = 0;
+
+    if (glXWaitVideoSyncSGI != NULL && glXGetVideoSyncSGI != NULL)
+    {
+        glXGetVideoSyncSGI (&counter);
+        glXWaitVideoSyncSGI (2, (counter + 1) % 2, &counter);
+    }
+
+    if (QBState.framesequential.buffer == GL_LEFT)
+    {
         QBState.framesequential.buffer = GL_RIGHT;
-    } else {
+    }
+    else
+    {
         QBState.framesequential.buffer = GL_LEFT;
     }
 
+    glXWaitGL ();
     real_glXSwapBuffers (dpy, drawable);
 }

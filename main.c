@@ -19,7 +19,7 @@ QuadBufferState QBState =
     {0, RED, CYAN, NULL, NULL},
     {VERTICAL},
     {{0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0}, SBS_LEFTRIGHT},
-    {0, NULL, NV3DVISION, NULL}
+    {0, NV3DVISION, NULL}
 };
 
 

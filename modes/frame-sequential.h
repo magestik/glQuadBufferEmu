@@ -16,7 +16,6 @@ typedef enum
 typedef struct frameSequentialState
 {
     GLenum buffer;
-    void (*swapMethod)(int);
 
     /* the user have shutter glasses or not */
     FRAMESEQUENTIAL_GLASSES glasses;
