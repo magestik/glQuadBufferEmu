@@ -1,28 +1,22 @@
 /* wrapped_functions.def
  * item list of all function we want to wrap */
 
-/* GL Wrapped function
- * define ( func, args ) */
-#ifdef WRAPPED_FUNCTIONS_GL
 
-X( glClear,          (GLbitfield mask) )
-X( glDrawBuffer,     (GLenum mode) )
-X( glDisable,        (GLenum cap) )
-X( glEnable,         (GLenum cap) )
-X( glGetBooleanv,    (GLenum pname, GLboolean * params) )
-X( glGetDoublev,     (GLenum pname, GLdouble * params) )
-X( glGetFloatv,      (GLenum pname, GLfloat * params) )
-X( glGetIntegerv,    (GLenum pname, GLint * params) )
-X( glScissor,        (GLint x, GLint y, GLsizei width, GLsizei height) )
-X( glViewport,       (GLint x, GLint y, GLsizei width, GLsizei height) )
-
-#endif /* WRAPPED_FUNCTIONS_GL */
-
-/* GLX Wrapped functions
+/* gl and glx Wrapped functions
  * define ( ret, func, args ) */
-#ifdef WRAPPED_FUNCTIONS_GLX
+#ifdef WRAPPED_FUNCTIONS_GL
 #ifndef WRAPPED_FUNCTIONS_GLX_GETPROC
 
+X( void,          glClear,               (GLbitfield mask) )
+X( void,          glDrawBuffer,          (GLenum mode) )
+X( void,          glDisable,             (GLenum cap) )
+X( void,          glEnable,              (GLenum cap) )
+X( void,          glGetBooleanv,         (GLenum pname, GLboolean * params) )
+X( void,          glGetDoublev,          (GLenum pname, GLdouble * params) )
+X( void,          glGetFloatv,           (GLenum pname, GLfloat * params) )
+X( void,          glGetIntegerv,         (GLenum pname, GLint * params) )
+X( void,          glScissor,             (GLint x, GLint y, GLsizei width, GLsizei height) )
+X( void,          glViewport,            (GLint x, GLint y, GLsizei width, GLsizei height) )
 X( GLXFBConfig*,  glXChooseFBConfig,     (Display *dpy, int screen,const int *attrib_list, int *nelements) )
 X( XVisualInfo*,  glXChooseVisual,       (Display *dpy, int screen, int *attribList) )
 X( int,           glXGetConfig,          (Display *dpy, XVisualInfo *vis, int attrib, int *value) )
@@ -37,7 +31,9 @@ X( void,          glXGetProcAddressARB,  (void) )
 #undef WRAPPED_FUNCTIONS_GLX_GETPROC
 #endif /* WRAPPED_FUNCTIONS_GLX_GETPROC */
 
-#endif /* WRAPPED_FUNCTIONS_GLX */
+#endif /* WRAPPED_FUNCTIONS_GL */
+
+
 
 /* X11 Wrapped functions
  * define ( ret, func, args ) */

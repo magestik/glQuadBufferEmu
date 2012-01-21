@@ -6,6 +6,9 @@
 #include <GL/glu.h>
 #include <GL/glut.h>
 
+#include "../glQuadBufferEmu.h"
+#include "../wrappers.h"
+
 // Constantes
 typedef enum
 {

@@ -1,8 +1,6 @@
 #ifndef H__WRAPPER_X11
 #define H__WRAPPER_X11
 
-extern void *libX11_handle;
-
 #define WRAPPED_FUNCTIONS_X11
 
 /* Real functions */

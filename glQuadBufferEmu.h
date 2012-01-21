@@ -13,10 +13,11 @@
 #include "./modes/side-by-side.h"
 #include "./modes/frame-sequential.h"
 
+#include "options.h"
+
 /* the different modes supported by the emulator. */
 typedef enum
 {
-    NONE,
     MONOSCOPIC,
     ANAGLYPH,
     SIDEBYSIDE,
@@ -45,9 +46,12 @@ typedef struct
     /* The states of the different view modes */
     MONOSCOPIC_STATE       monoscopic;
     ANAGLYPH_STATE         anaglyph;
-    INTERLACE_STATE        interlaced;
+    INTERLACED_STATE       interlaced;
     SIDEBYSIDE_STATE       sidebyside;
     FRAMESEQUENTIAL_STATE  framesequential;
+
+    /* The init function of each modes */
+    void (*init_mode[N_STEREO_MODE])(void);
 
 } QuadBufferState;
 
@@ -57,8 +61,6 @@ QuadBufferState QBState;
 
 /* Init and unload functions */
 void QuadBufferEmuLoadLibs (void);
-void QuadBufferEmuLoadConf (void);
-void QuadBufferEmuLoadMode (void);
 void QuadBufferEmuInit (void);
 void QuadBufferEmuExit (void);
 

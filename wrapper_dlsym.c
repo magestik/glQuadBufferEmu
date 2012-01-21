@@ -1,10 +1,15 @@
 /*******************************************************************************
  * wrapper_dlsym.c
- * You can compile this as a shared object, comment the first include and define
- * FATAL_ERROR (str_err) fprintf (stderr,"[EE] %s",str_err); exit(EXIT_FAILURE)
+ * You can compile this as a shared library.
  * compile with this line:
- * gcc -ldl -Wl,-init=dlsym_init -shared -o wrapper_dlsym.so wrapper_dlsym.c
+ * gcc -ldl -Wl,-init=dlsym_init -shared -o wrapper_dlsym.la wrapper_dlsym.c
  */
+
+
+/*
+#define FATAL_ERROR (str_err)\
+    {fprintf (stderr,"[EE] %s",str_err); exit(EXIT_FAILURE)}
+*/
 
 #include "wrapper_dlsym.h"
 
@@ -30,7 +35,8 @@ static HANDLE_PAIR* Handles = NULL;
 /* initiate wrapper_dlsym.so */
 void dlsym_init (void)
 {
-    dlsym_hd = open_lib ("libdl.so");
+    dlsym_hd = dlsym_open_lib ("libdl.so");
+
     if ((real_dlsym = __libc_dlsym (dlsym_hd, "dlsym")) != NULL)
     {
         fprintf (stderr, "[**] __libc_dlsym() ... Ok\n");
@@ -63,7 +69,7 @@ void *dlsym_find_function (const char *symbol)
 
 
 /* open a library with dlopen with error checking */
-void* open_lib (const char* lib)
+void* dlsym_open_lib (const char* lib)
 {
     void* r = NULL;
 
@@ -144,7 +150,7 @@ void dlsym_add_wrap (void* func, const char* symbol)
     }
     else
     {
-        while(cur != NULL)
+        while (cur != NULL)
         {
             last = cur;
             cur = cur->nxt;

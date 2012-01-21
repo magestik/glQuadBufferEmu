@@ -13,7 +13,7 @@
 #endif
 
 /* Handle on libX11.so used for dlopen */
-void *libX11_handle = NULL;
+static void *libX11_handle = NULL;
 
 
 void handleEvent(XEvent *e)
@@ -41,7 +41,8 @@ void handleEvent(XEvent *e)
         XLookupString (&e->xkey, buffer, sizeof(buffer), NULL, NULL);
         if (buffer[0] == 27)
         {
-            FATAL_ERROR ("QuadBufferEmu Exit... Ouch!");
+            fprintf (stderr, "[**] QuadBufferEmu Exit... Ouch!\n");
+            exit (EXIT_SUCCESS);
         }
         break;
     /*
@@ -145,7 +146,7 @@ int XWindowEvent
 
 void QuadBufferEmuInitX11 (void)
 {
-    libX11_handle = open_lib ("libX11.so");
+    libX11_handle = dlsym_open_lib ("libX11.so");
 
     /* Init wrappers */
     #define X(ret,func,args)\

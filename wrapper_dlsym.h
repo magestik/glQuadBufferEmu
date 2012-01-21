@@ -18,7 +18,7 @@ typedef struct handlePair
 typedef void* (*DLSYM_PROTOTYPE)(void *, const char *);
 
 void  dlsym_init (void);
-void* open_lib (const char* lib);
+void* dlsym_open_lib (const char* lib);
 void* dlsym (void *handle, const char *symbol);
 void* dlsym_test(void *lib, const char *name);
 void  dlsym_add_wrap (void* func, const char* symbol);

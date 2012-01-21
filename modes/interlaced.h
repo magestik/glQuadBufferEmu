@@ -10,20 +10,21 @@ typedef enum
 {
     VERTICAL,
     HORIZONTAL,
-    CHECKERBOARD
-} INTERLACE_MODE;
+    CHECKERBOARD,
+    N_INTERLACED_MODE
+} INTERLACED_MODE;
 
 typedef struct interlaceState
 {
-    INTERLACE_MODE mode; /* this isn't implemented yet */
+    INTERLACED_MODE mode; /* this isn't implemented yet */
 
-} INTERLACE_STATE;
+} INTERLACED_STATE;
 
-void initInterlacedMode(void);
 void interlace_stencil(int gliWindowWidth, int gliWindowHeight);
-
 void interlaced_glDrawBuffer(GLenum mode);
 XVisualInfo *interlaced_glXChooseVisual(Display *dpy, int screen, int *attribList);
 void interlaced_glutInitDisplayMode(unsigned int displayMode);
+
+void initInterlacedMode(void);
 
 #endif /* H__INTERLACED */

@@ -7,7 +7,6 @@
 
 #include "wrapper_dlsym.h"
 #include "wrapper_gl.h"
-#include "wrapper_glX.h"
 #include "wrapper_X11.h"
 
 #endif /* H__WRAPPERS */

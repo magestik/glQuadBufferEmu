@@ -5,24 +5,41 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 
-extern void *libGL_handle;
-
 #define WRAPPED_FUNCTIONS_GL
 
-#define X(func,args)\
-    void func args;
+#define X(ret,func,args)\
+    ret func args;
 
 #include "wrapped_functions.def"
+
+
+/* Special case, glXGetProcAdress */
+#define WRAPPED_FUNCTIONS_GLX_GETPROC
+#define X(ret,func,args)\
+    ret (* func (const GLubyte *procname)) args;
+
+#include "wrapped_functions.def"
+
 
 /* Real functions */
-#define X(func,args)\
-    void (*real_ ## func) args;
+#define X(ret,func,args)\
+    ret (*real_ ## func) args;
 
 #include "wrapped_functions.def"
 
+
+/* Special case, glXGetProcAdress */
+#define WRAPPED_FUNCTIONS_GLX_GETPROC
+#define X(ret,func,args)\
+    ret (*(*real_ ## func )(const GLubyte* procname)) args;
+
+#include "wrapped_functions.def"
+
+
+
 /* link to transform functions */
-#define X(func,args)\
-    void (*wrap_ ## func) args;
+#define X(ret,func,args)\
+    ret (*wrap_ ## func) args;
 
 #include "wrapped_functions.def"
 

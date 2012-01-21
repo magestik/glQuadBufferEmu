@@ -33,27 +33,7 @@ $ LD_PRELOAD=glQuadBufferEmu.so glxgears -stereo
 
 * * CONFIGURATION * *
 
-Sorry, the wrapper is hardcoded for now !
-
-You can change the display mode in main.c. Search
-
-/* The QuadBuffer emulator state */
-QuadBufferState QBState =
-{
-    0,
-    0,
-    GL_FALSE,
-    GL_FRONT,
-    GL_FALSE,
-    FRAMESEQUENTIAL, <= Hack here.
-    {0, 0},
-    {0, RED, CYAN, NULL, NULL},
-    {VERTICAL},
-    {{0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0}, SBS_SIDEBYSIDE},
-    {0, NULL, NV3DVISION, NULL}
-};
-
-And choose your display mode.
+EDIT ~/.config/glQuadBufferEmu/glQuadBufferEmu.conf
 
 Mode available:
 - Monoscopic (Left or Right) [MONOSCOPIC],
@@ -61,5 +41,3 @@ Mode available:
 - Side-by-side (Left/Right; Top/bottom; Frame-packing) [SIDEBYSIDE],
 - Interlaced (is it really working ?) [INTERLACED],
 - Frame-sequential (software page-flipping) [FRAMESEQUENTIAL].
-
-Sub-modes cannot be choosen easily for now ...

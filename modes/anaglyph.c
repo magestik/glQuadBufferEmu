@@ -1,15 +1,20 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <GL/glx.h>
+#include <GL/gl.h>
+#include <GL/glu.h>
+#include <GL/glut.h>
+
 #include "../glQuadBufferEmu.h"
 #include "../wrappers.h"
+
 #include "anaglyph.h"
 
 // Buffers: 9/9
 
 // http://paulbourke.net/texture_colour/anaglyph/
 
-/* C'est ti pas beau tout ça */
 GLboolean ColorMasks[N_COLOR_CODE][3] =
 {              /*  RED       GREEN     BLUE        */
     /* WHITE   */ {GL_FALSE, GL_FALSE, GL_FALSE},
