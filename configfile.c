@@ -6,12 +6,21 @@
 /* History:
  * 19/01/2011: Creation
  * 20/01/2011: first usable version
+ * 22/01/2011: bug correction
  */
 
 /* TODOs:
  * - Variable type other than integers
  * - saving config
  */
+
+
+#define FATAL_ERROR(str)\
+    {fprintf (stderr,"[EE] %s\n",str); exit(EXIT_FAILURE);}
+
+#define WARNING(str)\
+    fprintf (stderr,"[WW] %s\n", str)
+
 
 #include <unistd.h>
 #include <stdlib.h>
@@ -58,7 +67,7 @@ static CONFIG_PAIR* keylist = NULL;
 /** find the config key with the name val
  *  return : NULL if key not found
  */
-static CONFIG_PAIR* configfile_parse_options__find_key (const char* val)
+static CONFIG_PAIR* configfile__find_key (const char* val)
 {
     CONFIG_PAIR* cur = keylist;
     CONFIG_PAIR* found = NULL;
@@ -82,34 +91,22 @@ static CONFIG_PAIR* configfile_parse_options__find_key (const char* val)
  *  key : the key name
  *  val : the key value
  */
-static void configfile_parse_options__set (const char* key, const char* val)
+static void configfile__set_key (const char* key, const char* val)
 {
-    CONFIG_PAIR* pair = configfile_parse_options__find_key (key);
+    CONFIG_PAIR* pair = configfile__find_key (key);
     int i = 0;
 
-    if (pair != NULL)
-    {
-        while (i < 128)
-        {
-            if (strcmp (pair->key_values->key_values[i], val))
-            {
+    if (pair != NULL) {
+        while (pair->key_values->key_values[i] != NULL && i < NUM_KEY_MAX) {
+            if (strcmp (pair->key_values->key_values[i], val)) {
                 i++;
-            }
-            else
-            {
+            } else {
                 *pair->var_dst_int = pair->key_values->prg_values[i];
-                i = 999;
+                fprintf (stderr, "[WW] invalid argument %s\n", val);
+                break;
             }
-
         }
-
-        if (i == 128)
-        {
-            fprintf (stderr, "[WW] invalid argument %s\n", val);
-        }
-    }
-    else
-    {
+    } else {
         fprintf (stderr, "[WW] %s is not a supported option\n", key);
     }
 }
@@ -119,8 +116,7 @@ static void configfile_parse_options__set (const char* key, const char* val)
  *  file : the config file stream
  *  line : a buffer where the line will be wrote
  */
-static char* configfile_parse_options__parse_line (FILE* file, char* line)
-{
+static char* configfile__parse_line (FILE* file, char* line) {
     char*  ret = fgets (line, 127, file);
     int    pass = 0;
     char   key[64] = {'\0'};
@@ -142,7 +138,7 @@ static char* configfile_parse_options__parse_line (FILE* file, char* line)
     {
         if (sscanf (line, "%[^=]=%s", key, value) == 2)
         {
-            configfile_parse_options__set (key, value);
+            configfile__set_key (key, value);
         }
         else
         {
@@ -157,7 +153,7 @@ static char* configfile_parse_options__parse_line (FILE* file, char* line)
 /** Create the default config file
  *  default_cfg_str : a string of what the default config file will contain
  */
-static void configfile_create_default_file (const char* default_cfg_str)
+static void configfile__create_default_file (const char* default_cfg_str)
 {
     FILE* file = fopen (cfg_path, "w");
 
@@ -175,33 +171,32 @@ static void configfile_create_default_file (const char* default_cfg_str)
 
 
 /** return 1 if filename exist, 0 if not */
-static int configfile_check_file (const char* filename)
+static int configfile__check_file (void)
 {
-    FILE* cfg_path = fopen (filename, "r");
-    void* ret = cfg_path;
+    FILE* cfg_file = fopen (cfg_path, "r");
 
-    if (cfg_path)
+    if (cfg_file)
     {
-        fclose(cfg_path);
+        fclose(cfg_file);
     }
 
-    return ret? 1 : 0;
+    return cfg_file? 1 : 0;
 }
 
 
 /** check/create the config directory */
-static void configfile_check_dir (const char* prog_name)
+static void configfile__check_dir (const char* prog_name)
 {
     struct passwd *pw = getpwuid(getuid());
 
     strncpy (cfg_path, pw->pw_dir, 127);
-    strncat (cfg_path, "/.config/",127);
+    strncat (cfg_path, "/.config/", 127);
     mkdir (cfg_path, S_IRWXU | S_IRWXG);
-    strncat (cfg_path, prog_name,127);
+    strncat (cfg_path, prog_name, 127);
     mkdir (cfg_path, S_IRWXU | S_IRWXG);
-    strncat (cfg_path, "/",127);
-    strncat (cfg_path, prog_name,127);
-    strncat (cfg_path, ".conf",127);
+    strncat (cfg_path, "/", 127);
+    strncat (cfg_path, prog_name, 127);
+    strncat (cfg_path, ".conf", 127);
 }
 
 
@@ -244,7 +239,7 @@ void configfile_parse_options (void)
 
     if (cfg_file != NULL)
     {
-        while ((configfile_parse_options__parse_line (cfg_file, line)) != NULL);
+        while ((configfile__parse_line (cfg_file, line)) != NULL);
         fclose (cfg_file);
     }
     else
@@ -256,10 +251,11 @@ void configfile_parse_options (void)
 
 void configfile_init (const char* default_cfg_str, const char* prog_name)
 {
-    configfile_check_dir (prog_name);
+    configfile__check_dir (prog_name);
 
-    if (!configfile_check_file (cfg_path))
+    if (!configfile__check_file ())
     {
-        configfile_create_default_file (default_cfg_str);
+        configfile__create_default_file (default_cfg_str);
     }
 }
+

@@ -1,13 +1,15 @@
 #ifndef H__CONFIGFILE
 #define H__CONFIGFILE
 
+#define NUM_KEY_MAX 128
+
 typedef struct
 {
     /* a NULL terminated list of value that the
      * key can take in the config file */
-    const char*    key_values[128];
+    const char*    key_values[NUM_KEY_MAX];
     /* the corresponding values in the program */
-    int            prg_values[128];
+    int            prg_values[NUM_KEY_MAX];
 
 } KEY_VALUES;
 
@@ -20,7 +22,7 @@ void configfile_add_key (const char* name, KEY_VALUES* values, void* var_dst);
 
 
 /** Once all aption has been added to the parser, user must call this function
- *  for applying all the settings in the config file settings
+ *  for applying all the settings of the config file
  */
 void configfile_parse_options (void);
 
