@@ -14,14 +14,6 @@
  * - saving config
  */
 
-
-#define FATAL_ERROR(str)\
-    {fprintf (stderr,"[EE] %s\n",str); exit(EXIT_FAILURE);}
-
-#define WARNING(str)\
-    fprintf (stderr,"[WW] %s\n", str)
-
-
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -96,21 +88,30 @@ static void configfile__set_key (const char* key, const char* val)
     CONFIG_PAIR* pair = configfile__find_key (key);
     int i = 0;
 
-    if (pair != NULL) {
-        while (pair->key_values->key_values[i] != NULL && i < NUM_KEY_MAX) {
-            if (strcmp (pair->key_values->key_values[i], val)) {
+    if (pair != NULL)
+    {
+        while (i < NUM_KEY_MAX && pair->key_values->key_values[i] != NULL)
+        {
+            if (strcmp (pair->key_values->key_values[i], val))
+            {
                 i++;
-            } else {
+            }
+            else
+            {
                 *pair->var_dst_int = pair->key_values->prg_values[i];
-                fprintf (stderr, "[WW] invalid argument %s\n", val);
-                break;
+                i = 999;
             }
         }
-    } else {
+        if (i != 999)
+        {
+            fprintf (stderr, "[WW] invalid argument %s\n", val);
+        }
+    }
+    else
+    {
         fprintf (stderr, "[WW] %s is not a supported option\n", key);
     }
 }
-
 /** Get a valid line of the config file and send it to the function
  *  configfile_parse_options__set
  *  file : the config file stream

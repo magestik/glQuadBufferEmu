@@ -1,10 +1,8 @@
 #ifndef H__INTERLACED
 #define H__INTERLACED
 
-#include <GL/glx.h>
 #include <GL/gl.h>
-#include <GL/glu.h>
-#include <GL/glut.h>
+#include <GL/glx.h>
 
 typedef enum
 {

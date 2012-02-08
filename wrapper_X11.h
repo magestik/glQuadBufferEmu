@@ -9,7 +9,7 @@
 
 #include "wrapped_functions.def"
 
-/* Wrapped functions */
+/* Wrap functions */
 #define X(ret,func,args)\
     ret (*wrap_ ## func) args;
 

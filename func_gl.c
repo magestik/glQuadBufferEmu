@@ -1,6 +1,6 @@
 #include "glQuadBufferEmu.h"
 
-/** Implementation of GL function *********************************************/
+/** Implementation of GL functions *********************************************/
 
 /* http://www.opengl.org/sdk/docs/man/xhtml/glClear.xml */
 void glClear (GLbitfield mask)
@@ -9,12 +9,9 @@ void glClear (GLbitfield mask)
         fprintf(stderr, "glClear(0x%4X)\n", mask);
     #endif
 
-    if (wrap_glClear == NULL || QBState.enabled == GL_FALSE)
-    {
+    if (wrap_glClear == NULL || QBState.enabled == GL_FALSE) {
         real_glClear(mask);
-    }
-    else
-    {
+    }  else {
         wrap_glClear(mask);
     }
 }
@@ -97,14 +94,9 @@ void glDrawBuffer (GLenum mode)
         fprintf (stderr, "glDrawBuffer(%s)\n", bname);
     #endif
 
-    if (wrap_glDrawBuffer == NULL
-    ||  QBState.enabled == GL_FALSE
-    ||  wrap == GL_FALSE)
-    {
+    if (wrap_glDrawBuffer == NULL ||  QBState.enabled == GL_FALSE ||  wrap == GL_FALSE) {
         real_glDrawBuffer (mode);
-    }
-    else
-    {
+    } else {
         wrap_glDrawBuffer (mode);
     }
 }
@@ -117,12 +109,9 @@ void glEnable (GLenum cap)
         fprintf (stderr, "glEnable(%d)\n", cap);
     #endif
 
-    if (wrap_glEnable == NULL || QBState.enabled == GL_FALSE)
-    {
+    if (wrap_glEnable == NULL || QBState.enabled == GL_FALSE) {
         real_glEnable (cap);
-    }
-    else
-    {
+    } else {
         wrap_glEnable (cap);
     }
 }
@@ -134,12 +123,9 @@ void glDisable (GLenum cap)
         fprintf (stderr, "glDisable(%d)\n", cap);
     #endif
 
-    if (wrap_glDisable == NULL || QBState.enabled == GL_FALSE)
-    {
+    if (wrap_glDisable == NULL || QBState.enabled == GL_FALSE) {
         real_glDisable (cap);
-    }
-    else
-    {
+    } else {
         wrap_glDisable (cap);
     }
 }
@@ -159,12 +145,9 @@ void glGetBooleanv (GLenum pname, GLboolean *params)
         break;
 
     default:
-        if (wrap_glGetBooleanv == NULL || QBState.enabled == GL_FALSE)
-        {
+        if (wrap_glGetBooleanv == NULL || QBState.enabled == GL_FALSE) {
             real_glGetBooleanv (pname, params);
-        }
-        else
-        {
+        } else {
             wrap_glGetBooleanv (pname, params);
         }
     }
@@ -177,12 +160,9 @@ void glGetDoublev (GLenum pname, GLdouble * params)
         fprintf (stderr, "glGetDoublev(%d, %p)\n", pname, params);
     #endif
 
-    if (wrap_glGetDoublev == NULL || QBState.enabled == GL_FALSE)
-    {
+    if (wrap_glGetDoublev == NULL || QBState.enabled == GL_FALSE) {
         real_glGetDoublev (pname, params);
-    }
-    else
-    {
+    } else {
         wrap_glGetDoublev (pname, params);
     }
 }
@@ -194,12 +174,9 @@ void glGetFloatv (GLenum pname, GLfloat *params)
         fprintf (stderr, "glGetFloatv(%d, %p)\n", pname, params);
     #endif
 
-    if (wrap_glGetFloatv == NULL || QBState.enabled == GL_FALSE)
-    {
+    if (wrap_glGetFloatv == NULL || QBState.enabled == GL_FALSE) {
         real_glGetFloatv (pname, params);
-    }
-    else
-    {
+    } else {
         wrap_glGetFloatv (pname, params);
     }
 }
@@ -211,22 +188,18 @@ void glGetIntegerv (GLenum pname, GLint *params)
         fprintf (stderr, "glGetIntegerv(%d, %p)\n", pname, params);
     #endif
 
-    switch (pname)
-    {
-    case GL_DRAW_BUFFER:
-        *params = QBState.current;
+    switch (pname) {
+		case GL_DRAW_BUFFER:
+			*params = QBState.current;
         break;
 
-    default:
-        if (wrap_glGetIntegerv == NULL || QBState.enabled == GL_FALSE)
-        {
-            real_glGetIntegerv (pname, params);
-        }
-        else
-        {
-            wrap_glGetIntegerv (pname, params);
-        }
-    }
+		default:
+			if (wrap_glGetIntegerv == NULL || QBState.enabled == GL_FALSE) {
+				real_glGetIntegerv (pname, params);
+			} else {
+				wrap_glGetIntegerv (pname, params);
+			}
+	}
 }
 
 
@@ -237,13 +210,10 @@ void glScissor (GLint x, GLint y, GLsizei width, GLsizei height)
         fprintf (stderr, "glScissor(%d, %d, %d, %d)\n", x, y, width, height);
     #endif
 
-    if (wrap_glScissor == NULL || QBState.enabled == GL_FALSE)
-    {
+    if (wrap_glScissor == NULL || QBState.enabled == GL_FALSE) {
         real_glScissor (x, y, width, height);
-    }
-    else
-    {
-        wrap_glScissor (x, y, width, height); // Side-By-Side
+    } else {
+        wrap_glScissor (x, y, width, height);
     }
 }
 
@@ -255,13 +225,10 @@ void glViewport (GLint x, GLint y, GLsizei width, GLsizei height)
         fprintf (stderr, "glViewport(%d, %d, %d, %d)\n", x, y, width, height);
     #endif
 
-    if(wrap_glViewport == NULL || QBState.enabled == GL_FALSE)
-    {
+    if(wrap_glViewport == NULL || QBState.enabled == GL_FALSE) {
         real_glViewport (x, y, width, height);
-    }
-    else
-    {
-        wrap_glViewport (x, y, width, height); // Side-By-Side
+    } else {
+        wrap_glViewport (x, y, width, height);
     }
 }
 

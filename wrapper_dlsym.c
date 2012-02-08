@@ -5,12 +5,6 @@
  * gcc -ldl -Wl,-init=dlsym_init -shared -o wrapper_dlsym.la wrapper_dlsym.c
  */
 
-
-/*
-#define FATAL_ERROR (str_err)\
-    {fprintf (stderr,"[EE] %s",str_err); exit(EXIT_FAILURE)}
-*/
-
 #include "wrapper_dlsym.h"
 
 #include <stdio.h>
@@ -82,7 +76,6 @@ void* dlsym_open_lib (const char* lib)
     return r;
 }
 
-
 /* dlsym wrapper */
 void* dlsym (void *handle, const char *symbol)
 {
@@ -108,7 +101,6 @@ void* dlsym (void *handle, const char *symbol)
 
     #else
     return r? r : real_dlsym (handle, symbol);
-
     #endif
 }
 

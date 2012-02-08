@@ -1,19 +1,17 @@
 #ifndef H__GLQUADBUFFEREMU
 #define H__GLQUADBUFFEREMU
 
-/*#include "wrappers.h"*/
-
-#include <GL/glx.h>
 #include <GL/gl.h>
-#include <GL/glu.h>
+#include <GL/glx.h>
+
+#include "wrappers.h"
+#include "options.h"
 
 #include "./modes/monoscopic.h"
 #include "./modes/anaglyph.h"
 #include "./modes/interlaced.h"
 #include "./modes/side-by-side.h"
 #include "./modes/frame-sequential.h"
-
-#include "options.h"
 
 /* the different modes supported by the emulator. */
 typedef enum

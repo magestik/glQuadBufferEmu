@@ -1,12 +1,8 @@
 #ifndef H__MONOSCOPIC
 #define H__MONOSCOPIC
 
-
-#include <GL/glx.h>
 #include <GL/gl.h>
-#include <GL/glu.h>
-#include <GL/glut.h>
-
+#include <GL/glx.h>
 
 typedef struct monoscopicState
 {

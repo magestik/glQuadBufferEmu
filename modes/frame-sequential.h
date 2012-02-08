@@ -1,12 +1,6 @@
 #ifndef H__FRAMESEQUENTIAL
 #define H__FRAMESEQUENTIAL
 
-#include <GL/glx.h>
-#include <GL/gl.h>
-#include <GL/glu.h>
-#include <GL/glut.h>
-
-
 typedef enum
 {
     NO_GLASSES,

@@ -1,8 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-
 #include "../glQuadBufferEmu.h"
-#include "../wrappers.h"
 #include "monoscopic.h"
 
 // Buffers: 9/9

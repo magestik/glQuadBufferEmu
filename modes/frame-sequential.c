@@ -1,9 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
 #include "../glQuadBufferEmu.h"
-#include "../wrappers.h"
 #include "frame-sequential.h"
 
 void (*swapInterval) (int);
@@ -12,6 +7,12 @@ int (*glXGetVideoSyncSGI) (unsigned int *count);
 int (*glXWaitVideoSyncSGI) (int divisor, int remainder, unsigned int *count);
 
 // Buffers: 9/9
+
+/* 
+ * TODO: 
+ * - Sync with nouveau
+ * - Detections improvement
+*/
 
 /*
 00226         glXGetSyncValuesOML = (void *)glXGetProcAddress((unsigned char *)"glXGetSyncValuesOML");
@@ -29,13 +30,10 @@ static int is_glx_extension_supported (const char *query)
     int ret = 1;
     int scrnum;
 
-    if (!dpy)
-    {
+    if (!dpy) {
         WARNING ("couldn't open display");
         ret = -1;
-    }
-    else
-    {
+    } else {
         scrnum = DefaultScreen (dpy);
         glx_extensions = glXQueryExtensionsString (dpy, scrnum);
         if (strstr (glx_extensions, query) == '\0')
@@ -62,18 +60,11 @@ void frameSequential_glXSwapInterval (int i)
         fprintf (stderr, "glXSwapInterval(1)\n");
     #endif
 
-    if (is_glx_extension_supported ("GLX_MESA_swap_control"))
-    {
-        swapInterval = (void (*)(int)) real_glXGetProcAddress
-                                ((const GLubyte*) "glXSwapIntervalMESA");
-    }
-    else if (is_glx_extension_supported ("GLX_SGI_swap_control"))
-    {
-        swapInterval = (void (*)(int)) real_glXGetProcAddress
-                                ((const GLubyte*) "glXSwapIntervalSGI");
-    }
-    else
-    {
+    if (is_glx_extension_supported ("GLX_MESA_swap_control")) {
+        swapInterval = (void (*)(int)) real_glXGetProcAddress ((const GLubyte*) "glXSwapIntervalMESA");
+    } else if (is_glx_extension_supported ("GLX_SGI_swap_control")) {
+        swapInterval = (void (*)(int)) real_glXGetProcAddress ((const GLubyte*) "glXSwapIntervalSGI");
+    } else {
         WARNING ("No sync method !!!");
     }
 

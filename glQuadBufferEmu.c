@@ -1,13 +1,7 @@
-#include <dlfcn.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
 #include "glQuadBufferEmu.h"
 #include "wrappers.h"
 
-
-/* The QuadBuffer emulator default state */
+/* The Quad-Buffer emulator default state */
 QuadBufferState QBState =
 {
     0,
@@ -15,7 +9,7 @@ QuadBufferState QBState =
     GL_FALSE,
     GL_FRONT,
     GL_FALSE,
-    FRAMESEQUENTIAL,  // FRAMESEQUENTIAL,
+    FRAMESEQUENTIAL,
     {0, 0},
     {0, RED, CYAN, NULL, NULL},
     {VERTICAL},
@@ -30,30 +24,25 @@ QuadBufferState QBState =
     }
 };
 
-
 void QuadBufferEmuInitMode (void)
 {
-    if (QBState.mode >= N_STEREO_MODE)
-    {
+    if (QBState.mode >= N_STEREO_MODE) {
         FATAL_ERROR ("Quad-Buffer Stereo Wrapper: Mode not supported !")
-    }
-    else
-    {
+    } else {
         QBState.init_mode[QBState.mode] ();
     }
 }
 
-
 /* initialize the lib and all function we want to wrap */
 void QuadBufferEmuInit(void)
 {
-    QuadBufferEmuLoadConf ();
-    QuadBufferEmuInitGL ();
-    QuadBufferEmuInitX11 ();
+    QuadBufferEmuLoadConf();
+    QuadBufferEmuInitGL();
+    QuadBufferEmuInitX11();
 
-    atexit (QuadBufferEmuExit);
+    atexit(QuadBufferEmuExit);
 
-    QuadBufferEmuInitMode ();
+    QuadBufferEmuInitMode();
 }
 
 void QuadBufferEmuExit(void)
@@ -61,6 +50,7 @@ void QuadBufferEmuExit(void)
     #ifdef DEBUG
         fprintf (stderr, "Exiting ...\n");
     #endif
-    QuadBufferEmuUnloadGL ();
-    QuadBufferEmuUnloadX11 ();
+    
+    QuadBufferEmuUnloadGL();
+    QuadBufferEmuUnloadX11();
 }
