@@ -3,10 +3,7 @@ As you may know OpenGL is able to do Quad-Buffer Stereo for many years.
 But it only works with proffessionnal graphic cards, like Nvidia Quadro.
 
 The goal of this project is to provide Quad-Buffer Stereo supports on non-Quad-buffered video cards.
-It is designed for devellopers who wants to do Stereo application in OpenGL without having to support every display in the market !
 
-As a developer you just need to make a Quad-Buffered Stereo application.
-The users will have to install this OpenGL wrapper if they don't have a proffessionnal card.
 
 * * COMPILATION * *
 
@@ -16,12 +13,13 @@ $ make
 You can compile in debug mode:
 $ make debug
 
-* * USABILITY * *
 
-How to use it :
+* * USAGE * *
+
+You need to use LD_PRELOAD :
 $ LD_PRELOAD=/location/glQuadBufferEmu.so YourQuadBufferedApplication
 
-Example of use:
+Example :
 $ LD_PRELOAD=./glQuadBufferEmu.so glxgears -stereo
 
 You may want to make the lib available from any directory :
@@ -35,9 +33,11 @@ $ LD_PRELOAD=glQuadBufferEmu.so glxgears -stereo
 
 EDIT ~/.config/glQuadBufferEmu/glQuadBufferEmu.conf
 
-Mode available:
+Modes available :
 - Monoscopic (Left or Right) [MONOSCOPIC],
 - Anaglyph (any color) [ANAGLYPH],
 - Side-by-side (Left/Right; Top/bottom; Frame-packing) [SIDEBYSIDE],
-- Interlaced (is it really working ?) [INTERLACED],
 - Frame-sequential (software page-flipping) [FRAMESEQUENTIAL].
+
+Modes in progress :
+- Interlaced [INTERLACED]
