@@ -106,7 +106,14 @@ void setFramePackedViewport (void) {
 void sideBySide_glDrawBuffer (GLenum mode) {
 
     setCorrectViewport(); // in case height or width changed
-
+    
+	/* TODO: SI une CallList est en cours d'enregistrement :
+	 * - On arrete l'enregistrement
+	 * - On change le buffer (GL_FRONT_RIGHT, GL_BACK_RIGHT ou GL_RIGHT)
+	 * - On execute la CallList
+	 * - On efface la CallList
+	 */
+	 
     if(glIsEnabled (GL_SCISSOR_TEST)) real_glDisable (GL_SCISSOR_TEST);
 
     real_glDrawBuffer (mode);
@@ -115,6 +122,10 @@ void sideBySide_glDrawBuffer (GLenum mode) {
 	sideBySide_glScissor(0, 0, QBState.width, QBState.height);
 
     if (!glIsEnabled (GL_SCISSOR_TEST)) real_glEnable (GL_SCISSOR_TEST);
+    
+    /* TODO: SI mode non supporté :
+     * - On eregistre les commandes dans une CallList (en mode GL_COMPILE_AND_EXECUTE)
+     */
 }
 
 void sideBySide_glGetIntegerv (GLenum pname, GLint * params) {

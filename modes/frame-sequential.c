@@ -145,13 +145,15 @@ void frameSequential_glDrawBuffer (GLenum mode)
 void frameSequential_glXSwapBuffers (Display * dpy, GLXDrawable drawable)
 {
 
-    static unsigned int counter = 0;
-
+    /*static*/ unsigned int counter = 0;
+	
     if (glXWaitVideoSyncSGI != NULL && glXGetVideoSyncSGI != NULL)
     {
-        glXGetVideoSyncSGI (&counter);
-        glXWaitVideoSyncSGI (2, (counter + 1) % 2, &counter);
+        //glXGetVideoSyncSGI (&counter);
+        //glXWaitVideoSyncSGI (2, (counter + 1) % 2, &counter); 
+        glXWaitVideoSyncSGI (2, ((QBState.framesequential.buffer == GL_LEFT) ? 1 : 0), &counter); // on attend que (counter % 2) = side
     }
+
 
     if (QBState.framesequential.buffer == GL_LEFT)
     {
