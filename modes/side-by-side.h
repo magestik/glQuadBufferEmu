@@ -16,7 +16,7 @@ typedef struct sideBySideState
 {
     int   leftViewport[4];
     int   rightViewport[4];
-    int   ratio[2];
+    float ratio[2];
 
     SIDEBYSIDE_MODE mode;
 

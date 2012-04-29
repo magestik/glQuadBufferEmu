@@ -82,15 +82,17 @@ void setLeftRightViewport (void) {
 }
 
 void setFramePackedViewport (void) {
+	int marge = QBState.height / 49;
+	
     QBState.sidebyside.leftViewport[0] = 0;
     QBState.sidebyside.leftViewport[1] = 0;
 
     QBState.sidebyside.rightViewport[0] = 0;
     /* MUST be in fullscreen and in the correct resolution for this to work correctly */
-    QBState.sidebyside.rightViewport[1] = (QBState.height / 2) + (QBState.height / 49);
+    QBState.sidebyside.rightViewport[1] = (QBState.height / 2) + (marge / 2);
 
     QBState.sidebyside.ratio[0] = 1;
-    QBState.sidebyside.ratio[1] = 2;
+    QBState.sidebyside.ratio[1] = 49/24;
 
     /*
     real_glDrawBuffer(GL_BACK);

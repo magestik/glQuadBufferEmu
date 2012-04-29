@@ -68,7 +68,7 @@ void frameSequential_glXSwapInterval (int i)
         WARNING ("No sync method !!!");
     }
 
-    swapInterval (i);
+    swapInterval(i);
 }
 
 void initFrameSequentialMode (void)

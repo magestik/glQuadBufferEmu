@@ -46,7 +46,7 @@ static KEY_VALUES opt_interlaced_mode = {
 };
 
 static KEY_VALUES opt_sbs_mode = {
-    {"TOPBOTTOM", "LEFTRIGHT", "FRAMPACKED", NULL},
+    {"TOPBOTTOM", "LEFTRIGHT", "FRAMEPACKED", NULL},
     {SBS_TOPBOTTOM, SBS_LEFTRIGHT, SBS_FRAMEPACKED}
 };
 
