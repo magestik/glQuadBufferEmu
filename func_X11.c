@@ -10,8 +10,7 @@ void handleEvent(XEvent *e)
     {
     case ConfigureNotify:
         #ifdef DEBUG
-            fprintf (stderr, "ConfigureNotify (%d, %d)\n",
-                     QBState.width, QBState.height);
+            fprintf (stderr, "ConfigureNotify (%d, %d)\n", QBState.width, QBState.height);
         #endif
 
         QBState.height = e->xconfigure.height;
@@ -25,8 +24,7 @@ void handleEvent(XEvent *e)
         #endif
 
         XLookupString (&e->xkey, buffer, sizeof(buffer), NULL, NULL);
-        if (buffer[0] == 27)
-        {
+        if (buffer[0] == 27) { // F12
             fprintf (stderr, "[**] QuadBufferEmu Exit... Ouch!\n");
             exit (EXIT_SUCCESS);
         }
@@ -46,8 +44,7 @@ Window XCreateWindow
      XSetWindowAttributes *attributes)
 {
     #ifdef DEBUG
-        fprintf (stderr,
-         "XCreateWindow (%p, %ld, %d, %d, %u, %u, %u, %d, %u, %p, %ld, %p)\n",
+        fprintf (stderr, "XCreateWindow (%p, %ld, %d, %d, %u, %u, %u, %d, %u, %p, %ld, %p)\n",
          display, parent, x, y, width, height, border_width, depth, class,
          visual, valuemask, attributes);
     #endif

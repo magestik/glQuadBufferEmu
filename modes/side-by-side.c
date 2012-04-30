@@ -1,19 +1,26 @@
 #include "../glQuadBufferEmu.h"
 #include "side-by-side.h"
-
+#include <X11/extensions/xf86vmode.h>
 // Buffers: 6/9 (TODO: GL_FRONT, GL_BACK, GL_FRONT_AND_BACK)
 
 void initSideBySideMode (void) {
     /* TODO : Hardware page-flipping for active shutter glasses
      *        ( X server viewport + GenLock ) */
 
-    /*XF86VidModeModeInfo **modes;
-    int modeNum, bestMode;*/
-    
+    XF86VidModeModeInfo **modes;
+    int modeNum, bestMode;
+    int i;
+   
+    Display * display;                                       
+	int screen;
+
     // Change resolution : http://content.gpwiki.org/index.php/OpenGL:Tutorials:Setting_up_OpenGL_on_X11
-    /*if(QBState.sidebyside.mode == SBS_FRAMEPACKED) { // Go to HDMI 1.4 resolution (1920x2205@24 or 1280x1470@60)
-		XF86VidModeGetAllModeLines(display, scrnum, &modeNum, &modes);
-		desktopMode = *modes[0];
+    if(QBState.sidebyside.mode == SBS_FRAMEPACKED) { // Go to HDMI 1.4 resolution (1920x2205@24 or 1280x1470@60)
+        display = XOpenDisplay(0);    
+		screen = DefaultScreen(display);
+		
+		XF86VidModeGetAllModeLines(display, screen, &modeNum, &modes);
+		//desktopMode = *modes[0];
 		bestMode = 0;
 		for (i = 0; i < modeNum; i++) {
 			if ( modes[i]->hdisplay == 1920 && modes[i]->vdisplay == 2205 ) { // the best
@@ -26,10 +33,11 @@ void initSideBySideMode (void) {
 
 		XF86VidModeSwitchToMode(display, screen, modes[bestMode]);
 		XF86VidModeSetViewPort(display, screen, 0, 0);
-		width = modes[bestMode]->hdisplay;
-		height = modes[bestMode]->vdisplay;
+		QBState.width = modes[bestMode]->hdisplay;
+		QBState.height = modes[bestMode]->vdisplay;
+		printf("Resolution set to %dx%d\n", modes[bestMode]->hdisplay, modes[bestMode]->vdisplay);
 		XFree(modes);
-	}*/
+	}
 	
     wrap_glDrawBuffer = sideBySide_glDrawBuffer;
     wrap_glGetIntegerv = sideBySide_glGetIntegerv;
@@ -82,17 +90,17 @@ void setLeftRightViewport (void) {
 }
 
 void setFramePackedViewport (void) {
-	int marge = QBState.height / 49;
+	int marge = QBState.height / 49; // 30 ou 45
 	
     QBState.sidebyside.leftViewport[0] = 0;
     QBState.sidebyside.leftViewport[1] = 0;
 
     QBState.sidebyside.rightViewport[0] = 0;
     /* MUST be in fullscreen and in the correct resolution for this to work correctly */
-    QBState.sidebyside.rightViewport[1] = (QBState.height / 2) + (marge / 2);
+    QBState.sidebyside.rightViewport[1] = (QBState.height + marge) / 2; // 750 = 720 + 30 ou  1125 = 1080 + 45
 
     QBState.sidebyside.ratio[0] = 1;
-    QBState.sidebyside.ratio[1] = 49/24;
+    QBState.sidebyside.ratio[1] = 49/24; // HEIGHT / (49/24) = 720 ou 1080
 
     /*
     real_glDrawBuffer(GL_BACK);
@@ -139,22 +147,22 @@ void sideBySide_glGetIntegerv (GLenum pname, GLint * params) {
 			
 			params[0] -= QBState.sidebyside.leftViewport[0];
 			params[1] -= QBState.sidebyside.leftViewport[1];
-			params[2] *= QBState.sidebyside.ratio[0];
-			params[3] *= QBState.sidebyside.ratio[1];
+			params[2] /= QBState.sidebyside.ratio[0];
+			params[3] /= QBState.sidebyside.ratio[1];
 			
 		} else if (QBState.current == GL_BACK_RIGHT ||  QBState.current == GL_FRONT_RIGHT ||  QBState.current == GL_RIGHT) {
 			
 			params[0] -= QBState.sidebyside.rightViewport[0];
 			params[1] -= QBState.sidebyside.rightViewport[1];
-			params[2] *= QBState.sidebyside.ratio[0];
-			params[3] *= QBState.sidebyside.ratio[1];
+			params[2] /= QBState.sidebyside.ratio[0];
+			params[3] /= QBState.sidebyside.ratio[1];
 			
 		} else {
 			
 			params[0] -= QBState.sidebyside.leftViewport[0];
 			params[1] -= QBState.sidebyside.leftViewport[1];
-			params[2] *= QBState.sidebyside.ratio[0];
-			params[3] *= QBState.sidebyside.ratio[1];
+			params[2] /= QBState.sidebyside.ratio[0];
+			params[3] /= QBState.sidebyside.ratio[1];
 			
 		}
 	}

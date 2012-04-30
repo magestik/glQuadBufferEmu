@@ -1,10 +1,6 @@
 #ifndef H__SIDEBYSIDE
 #define H__SIDEBYSIDE
 
-/*
-#include <X11/extensions/xf86vmode.h>
-*/
-
 typedef enum {
     SBS_TOPBOTTOM,
     SBS_LEFTRIGHT,
