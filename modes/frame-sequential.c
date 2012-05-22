@@ -1,10 +1,15 @@
 #include "../glQuadBufferEmu.h"
 #include "frame-sequential.h"
 
+#include <unistd.h>
+#include <fcntl.h>
+
 void (*swapInterval) (int);
 
 int (*glXGetVideoSyncSGI) (unsigned int *count);
 int (*glXWaitVideoSyncSGI) (int divisor, int remainder, unsigned int *count);
+
+int proc_glasses = 0;
 
 // Buffers: 9/9
 
@@ -21,7 +26,6 @@ int (*glXWaitVideoSyncSGI) (int divisor, int remainder, unsigned int *count);
 00229         glXWaitForMscOML = (void *)glXGetProcAddress((unsigned char *)"glXWaitForMscOML");
 00230         glXWaitForSbcOML = (void *)glXGetProcAddress((unsigned char *)"glXWaitForSbcOML");
 */
-
 
 static int is_glx_extension_supported (const char *query)
 {
@@ -53,9 +57,7 @@ static int is_glx_extension_supported (const char *query)
 }
 
 
-void frameSequential_glXSwapInterval (int i)
-{
-    HERE;
+void frameSequential_glXSwapInterval (int i) {
     #ifdef DEBUG
         fprintf (stderr, "glXSwapInterval(1)\n");
     #endif
@@ -71,21 +73,21 @@ void frameSequential_glXSwapInterval (int i)
     swapInterval(i);
 }
 
-void initFrameSequentialMode (void)
-{
+void initFrameSequentialMode (void) {
     QBState.framesequential.buffer = GL_LEFT;
+    
+	proc_glasses = open("/proc/sys/glasses3d/eye", O_WRONLY);
+	if(proc_glasses <= 0){
+		printf("No glasses supported, you are on your own !");
+	}
 
-    if (getenv ("__GL_SYNC_TO_VBLANK"))
-    {
+    if (getenv ("__GL_SYNC_TO_VBLANK")) {
         fprintf (stderr, "__GL_SYNC_TO_VBLANK defined\n");
-    }
-    else
-    {
+    } else {
         glXWaitVideoSyncSGI = NULL;
         glXGetVideoSyncSGI = NULL;
 
-        if (real_glXGetProcAddressARB)
-        {
+        if (real_glXGetProcAddressARB) {
             glXWaitVideoSyncSGI =
                 (void *) real_glXGetProcAddressARB
                                 ((unsigned char *)"glXWaitVideoSyncSGI");
@@ -94,12 +96,9 @@ void initFrameSequentialMode (void)
                                 ((unsigned char *)"glXGetVideoSyncSGI");
         }
 
-        if (glXWaitVideoSyncSGI != NULL && glXGetVideoSyncSGI != NULL )
-        {
+        if (glXWaitVideoSyncSGI != NULL && glXGetVideoSyncSGI != NULL ) {
             fprintf (stderr, "glXWaitVideoSyncSGI && glXGetVideoSyncSGI\n");
-        }
-        else
-        {
+        } else {
             frameSequential_glXSwapInterval(1);
         }
     }
@@ -142,8 +141,7 @@ void frameSequential_glDrawBuffer (GLenum mode)
     }
 }
 
-void frameSequential_glXSwapBuffers (Display * dpy, GLXDrawable drawable)
-{
+void frameSequential_glXSwapBuffers (Display * dpy, GLXDrawable drawable) {
 
     /*static*/ unsigned int counter = 0;
 	
@@ -166,4 +164,11 @@ void frameSequential_glXSwapBuffers (Display * dpy, GLXDrawable drawable)
 
     glXWaitGL ();
     real_glXSwapBuffers (dpy, drawable);
+	if(proc_glasses > 0){
+		if(QBState.framesequential.buffer == GL_LEFT) {
+			write(proc_glasses, "0", sizeof(char));
+		} else {
+			write(proc_glasses, "1", sizeof(char));
+		}
+	}
 }
