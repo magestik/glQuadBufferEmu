@@ -7,11 +7,11 @@
 #include "wrappers.h"
 #include "options.h"
 
-#include "../src/modes/monoscopic.h"
-#include "../src/modes/anaglyph.h"
-#include "../src/modes/interlaced.h"
-#include "../src/modes/side-by-side.h"
-#include "../src/modes/frame-sequential.h"
+#include "../src/modes/monoscopic/monoscopic.h"
+#include "../src/modes/anaglyph/anaglyph.h"
+#include "../src/modes/interlaced/interlaced.h"
+#include "../src/modes/side-by-side/side-by-side.h"
+#include "../src/modes/frame-sequential/frame-sequential.h"
 
 /* the different modes supported by the emulator. */
 typedef enum
