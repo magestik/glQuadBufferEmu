@@ -1,4 +1,4 @@
-#include "../glQuadBufferEmu.h"
+#include "glQuadBufferEmu.h"
 #include "monoscopic.h"
 
 // Buffers: 9/9

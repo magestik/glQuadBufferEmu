@@ -1,4 +1,4 @@
-#include "../glQuadBufferEmu.h"
+#include "glQuadBufferEmu.h"
 #include "anaglyph.h"
 
 // Buffers: 9/9 *OK*
@@ -41,15 +41,15 @@ void anaglyph_glDrawBuffer (GLenum mode)
     real_glDrawBuffer (mode);
 
     if (QBState.current == GL_BACK_LEFT ||  QBState.current == GL_FRONT_LEFT ||  QBState.current == GL_LEFT) {
-        
+
         real_glClear (GL_DEPTH_BUFFER_BIT); // | GL_COLOR_BUFFER_BIT
         glColorMask (QBState.anaglyph.leftMask[0], QBState.anaglyph.leftMask[1], QBState.anaglyph.leftMask[2], GL_TRUE);
 
     } else if (QBState.current == GL_BACK_RIGHT ||  QBState.current == GL_FRONT_RIGHT ||  QBState.current == GL_RIGHT) {
-        
+
         real_glClear (GL_DEPTH_BUFFER_BIT);
         glColorMask (QBState.anaglyph.rightMask[0], QBState.anaglyph.rightMask[1], QBState.anaglyph.rightMask[2], GL_TRUE);
-        
+
     } else { // GL_FRONT, GL_BACK, GL_FRONT_AND_BACK
         glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
     }

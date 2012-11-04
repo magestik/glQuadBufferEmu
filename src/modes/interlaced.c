@@ -1,4 +1,4 @@
-#include "../glQuadBufferEmu.h"
+#include "glQuadBufferEmu.h"
 #include "interlaced.h"
 
 // Buffers: 6/9 (TODO: GL_FRONT, GL_BACK, GL_FRONT_AND_BACK)

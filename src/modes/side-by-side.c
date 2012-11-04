@@ -1,4 +1,4 @@
-#include "../glQuadBufferEmu.h"
+#include "glQuadBufferEmu.h"
 #include "side-by-side.h"
 #include <X11/extensions/xf86vmode.h>
 // Buffers: 6/9 (TODO: GL_FRONT, GL_BACK, GL_FRONT_AND_BACK)
@@ -10,15 +10,15 @@ void initSideBySideMode (void) {
     XF86VidModeModeInfo **modes;
     int modeNum, bestMode;
     int i;
-   
-    Display * display;                                       
+
+    Display * display;
 	int screen;
 
     // Change resolution : http://content.gpwiki.org/index.php/OpenGL:Tutorials:Setting_up_OpenGL_on_X11
     if(QBState.sidebyside.mode == SBS_FRAMEPACKED) { // Go to HDMI 1.4 resolution (1920x2205@24 or 1280x1470@60)
-        display = XOpenDisplay(0);    
+        display = XOpenDisplay(0);
 		screen = DefaultScreen(display);
-		
+
 		XF86VidModeGetAllModeLines(display, screen, &modeNum, &modes);
 		//desktopMode = *modes[0];
 		bestMode = 0;
@@ -38,18 +38,18 @@ void initSideBySideMode (void) {
 		printf("Resolution set to %dx%d\n", modes[bestMode]->hdisplay, modes[bestMode]->vdisplay);
 		XFree(modes);
 	}
-	
+
     wrap_glDrawBuffer = sideBySide_glDrawBuffer;
     wrap_glGetIntegerv = sideBySide_glGetIntegerv;
     wrap_glScissor = sideBySide_glScissor;
     wrap_glViewport = sideBySide_glViewport;
-    
+
     setCorrectViewport();
 }
 
 void setCorrectViewport (void) {
     switch (QBState.sidebyside.mode) {
-		
+
 		case SBS_LEFTRIGHT:
 			setLeftRightViewport();
         break;
@@ -91,7 +91,7 @@ void setLeftRightViewport (void) {
 
 void setFramePackedViewport (void) {
 	int marge = QBState.height / 49; // 30 ou 45
-	
+
     QBState.sidebyside.leftViewport[0] = 0;
     QBState.sidebyside.leftViewport[1] = 0;
 
@@ -116,54 +116,54 @@ void setFramePackedViewport (void) {
 void sideBySide_glDrawBuffer (GLenum mode) {
 
     setCorrectViewport(); // in case height or width changed
-    
+
 	/* TODO: SI une CallList est en cours d'enregistrement :
 	 * - On arrete l'enregistrement
 	 * - On change le buffer (GL_FRONT_RIGHT, GL_BACK_RIGHT ou GL_RIGHT)
 	 * - On execute la CallList
 	 * - On efface la CallList
 	 */
-	 
+
     if(glIsEnabled (GL_SCISSOR_TEST)) real_glDisable (GL_SCISSOR_TEST);
 
     real_glDrawBuffer (mode);
-    
+
 	sideBySide_glViewport(0, 0, QBState.width, QBState.height);
 	sideBySide_glScissor(0, 0, QBState.width, QBState.height);
 
     if (!glIsEnabled (GL_SCISSOR_TEST)) real_glEnable (GL_SCISSOR_TEST);
-    
+
     /* TODO: SI mode non supporté :
      * - On eregistre les commandes dans une CallList (en mode GL_COMPILE_AND_EXECUTE)
      */
 }
 
 void sideBySide_glGetIntegerv (GLenum pname, GLint * params) {
-	
+
 	real_glGetIntegerv (pname, params);
-	
+
 	if (pname == GL_VIEWPORT || pname == GL_SCISSOR_BOX) {
 		if (QBState.current == GL_BACK_LEFT ||  QBState.current == GL_FRONT_LEFT ||  QBState.current == GL_LEFT) {
-			
+
 			params[0] -= QBState.sidebyside.leftViewport[0];
 			params[1] -= QBState.sidebyside.leftViewport[1];
 			params[2] /= QBState.sidebyside.ratio[0];
 			params[3] /= QBState.sidebyside.ratio[1];
-			
+
 		} else if (QBState.current == GL_BACK_RIGHT ||  QBState.current == GL_FRONT_RIGHT ||  QBState.current == GL_RIGHT) {
-			
+
 			params[0] -= QBState.sidebyside.rightViewport[0];
 			params[1] -= QBState.sidebyside.rightViewport[1];
 			params[2] /= QBState.sidebyside.ratio[0];
 			params[3] /= QBState.sidebyside.ratio[1];
-			
+
 		} else {
-			
+
 			params[0] -= QBState.sidebyside.leftViewport[0];
 			params[1] -= QBState.sidebyside.leftViewport[1];
 			params[2] /= QBState.sidebyside.ratio[0];
 			params[3] /= QBState.sidebyside.ratio[1];
-			
+
 		}
 	}
 }
@@ -171,21 +171,21 @@ void sideBySide_glGetIntegerv (GLenum pname, GLint * params) {
 void sideBySide_glScissor (GLint x, GLint y, GLsizei width, GLsizei height) {
 
     if (QBState.current == GL_BACK_LEFT ||  QBState.current == GL_FRONT_LEFT ||  QBState.current == GL_LEFT) {
-        
+
         real_glScissor (QBState.sidebyside.leftViewport[0] + x,
                         QBState.sidebyside.leftViewport[1] + y,
                         width / QBState.sidebyside.ratio[0],
                         height / QBState.sidebyside.ratio[1]);
-   
+
     } else if (QBState.current == GL_BACK_RIGHT ||  QBState.current == GL_FRONT_RIGHT ||  QBState.current == GL_RIGHT) {
-        
+
         real_glScissor (QBState.sidebyside.rightViewport[0] + x,
                         QBState.sidebyside.rightViewport[1] + y,
                         width / QBState.sidebyside.ratio[0],
                         height / QBState.sidebyside.ratio[1]);
-    
+
     } else {
-        
+
         real_glScissor (QBState.sidebyside.leftViewport[0] + x,
                         QBState.sidebyside.leftViewport[1] + y,
                         width / QBState.sidebyside.ratio[0],
@@ -196,21 +196,21 @@ void sideBySide_glScissor (GLint x, GLint y, GLsizei width, GLsizei height) {
 void sideBySide_glViewport (GLint x, GLint y, GLsizei width, GLsizei height) {
 
     if (QBState.current == GL_BACK_LEFT ||  QBState.current == GL_FRONT_LEFT ||  QBState.current == GL_LEFT) {
-        
+
         real_glViewport (QBState.sidebyside.leftViewport[0] + x,
                          QBState.sidebyside.leftViewport[1] + y,
                          width / QBState.sidebyside.ratio[0],
                          height / QBState.sidebyside.ratio[1]);
-                         
+
     } else if (QBState.current == GL_BACK_RIGHT ||  QBState.current == GL_FRONT_RIGHT ||  QBState.current == GL_RIGHT) {
-        
+
         real_glViewport (QBState.sidebyside.rightViewport[0] + x,
                          QBState.sidebyside.rightViewport[1] + y,
                          width / QBState.sidebyside.ratio[0],
                          height / QBState.sidebyside.ratio[1]);
-                         
+
     } else {
-        
+
         real_glViewport (QBState.sidebyside.leftViewport[0] + x,
                          QBState.sidebyside.leftViewport[1] + y,
                          width / QBState.sidebyside.ratio[0],
