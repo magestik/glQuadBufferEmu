@@ -22,8 +22,6 @@ struct nvstusb_keys {
 struct nvstusb_context *nvstusb_init(char const * fw);
 void nvstusb_deinit(struct nvstusb_context *ctx);
 void nvstusb_set_rate(struct nvstusb_context *ctx, float rate);
-void nvstusb_swap(struct nvstusb_context *ctx, enum nvstusb_eye eye, void (*swapfunc)());
 void nvstusb_get_keys(struct nvstusb_context *ctx, struct nvstusb_keys *keys);
 void nvstusb_invert_eyes(struct nvstusb_context *ctx);
-void nvstusb_start_stereo_thread(struct nvstusb_context *ctx);
-void nvstusb_stop_stereo_thread(struct nvstusb_context *ctx);
+void nvstusb_set_eye(struct nvstusb_context *ctx, enum nvstusb_eye eye);

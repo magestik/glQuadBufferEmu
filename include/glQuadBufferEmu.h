@@ -14,8 +14,7 @@
 #include "../src/modes/frame-sequential/frame-sequential.h"
 
 /* the different modes supported by the emulator. */
-typedef enum
-{
+typedef enum {
     MONOSCOPIC,
     ANAGLYPH,
     SIDEBYSIDE,
