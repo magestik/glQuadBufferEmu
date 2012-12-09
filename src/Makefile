@@ -1,5 +1,5 @@
 CFLAGS = -I../include -std=c99 -Wall -Wextra -Wwrite-strings -Wunreachable-code -fPIC -shared -Wl,-init=QuadBufferEmuInit
-LDFLAGS = -ldl -lusb
+LDFLAGS = -ldl -lusb-1.0
 DEBUGFLAGS = -g -DDEBUG
 PRJNAME = glQuadBufferEmu
 SOURCES = *.c ./modes/*/*.c
