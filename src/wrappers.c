@@ -7,7 +7,7 @@ static void *libX11_handle = NULL;
 
 void QuadBufferEmuInitGL(void)
 {
-    libGL_handle = dlsym_open_lib("libGL.so");
+    libGL_handle = dlsym_open_lib("/usr/lib64/libGL.so");
 
     /* Init wrappers */
     #define X(ret,func,args)\

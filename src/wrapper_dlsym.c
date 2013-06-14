@@ -68,7 +68,7 @@ void* dlsym_open_lib (const char* lib)
     void* r = NULL;
 
     fprintf (stderr, "[**] Opening library \"%s\"\n", lib);
-    if ((r = dlopen (lib, RTLD_LAZY)) == NULL)
+    if ((r = dlopen (lib, RTLD_NOW | RTLD_GLOBAL)) == NULL)
     {
         FATAL_ERROR (dlerror());
     }
