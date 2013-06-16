@@ -6,15 +6,15 @@ tests:
 	cd tests; make
 
 glQuadBufferEmu:
-	cd src; make && mv ./glQuadBufferEmu.so ../
+	cd src; make
 
 install: glQuadBufferEmu
 	mkdir -p $(INSTALL_DIR)
-	cp ./glQuadBufferEmu.so $(INSTALL_DIR)/libGL.so
-	ln -s $(INSTALL_DIR)/libGL.so $(INSTALL_DIR)/libGL.so.1
-	ln -s $(INSTALL_DIR)/libGL.so $(INSTALL_DIR)/libGL.so.1.0
-	echo $(INSTALL_DIR) > ./glQuadBufferEmu.conf
-	cp ./glQuadBufferEmu.conf /etc/ld.so.conf.d/
+	cp ./src/glQuadBufferEmu.so $(INSTALL_DIR)/libGL.so
+	ln -f -s $(INSTALL_DIR)/libGL.so $(INSTALL_DIR)/libGL.so.1
+	echo $(INSTALL_DIR) > ./conf/glQuadBufferEmu.conf
+	cp ./conf/71-stereoscopic.rules /etc/udev/rules.d/
+	cp ./conf/glQuadBufferEmu.conf /etc/ld.so.conf.d/
 	ldconfig
 
 clean:

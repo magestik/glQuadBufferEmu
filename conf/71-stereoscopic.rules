@@ -1,0 +1,5 @@
+# v1
+SUBSYSTEM=="usb", ATTR{idVendor}=="0955", ATTR{idProduct}=="0007", MODE="0666"
+
+# integrated
+SUBSYSTEM=="usb", ATTR{idVendor}=="0955", ATTR{idProduct}=="7002", MODE="0666"
